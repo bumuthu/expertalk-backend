@@ -1,0 +1,29 @@
+{
+  "name": "expertalk-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": ""
+  },
+  "dependencies": {
+    "@mintoven/common": "^1.0.14",
+    "amazon-cognito-identity-js": "^5.0.2",
+    "fs": "0.0.1-security",
+    "jwt-decode": "^3.1.2",
+    "mongoose": "^5.12.5",
+    "nodemailer": "^6.7.8",
+    "source-map-support": "^0.5.19",
+    "stripe": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.93",
+    "@types/node": "^14.14.6",
+    "ts-loader": "^8.0.10",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  },
+  "author": "Mintoon.io",
+  "license": "MIT"
+}

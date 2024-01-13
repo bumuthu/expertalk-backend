@@ -1,0 +1,383 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 30
+    Runtime: nodejs14.x
+    CodeUri: ../
+    Environment:
+      Variables:
+        MO_AWS_REGION: !Sub ${AWS::Region}
+        MO_ENV_NAME: !Sub ${EnvironmentName}
+        MO_AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
+        MO_MONGO_PATH: !Sub ${MongoPath}
+        MO_COGNITO_USER_POOL_ID: !Sub ${CognitoUserPoolId}
+        MO_COGNITO_USER_POOL_CLIENT: !Sub ${CognitoUserPoolClient}
+        MO_STRIPE_SECRET_KEY: !Sub ${StripeSecretKey}
+
+Resources:
+  # API resource
+  RESTApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${ApiGatewayName}-rest'
+      StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
+
+  # Auth handlers
+
+  # POST v1/auth/sign-in
+  UserSignInHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/auth-handlers/sign-in-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserSignInHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /auth/sign-in
+            Method: POST
+            Auth:
+              Authorizer: NONE
+
+
+  # Collection handlers
+
+  # POST v1/collection
+  CollectionCreateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-create-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionCreateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection
+            Method: POST
+
+  # PUT v1/collection
+  CollectionUpdateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-update-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionUpdateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection
+            Method: PUT
+
+  # GET v1/collection/<collectionId>
+  CollectionRetrievalByIdHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-retrieval-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionRetrievalByIdHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/{collectionId}
+            Method: GET
+
+  # DELETE v1/collection/<collectionId>
+  CollectionDeleteHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-delete-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionDeleteHandler'
+      Policies:
+      - S3FullAccessPolicy:
+          BucketName: !Ref LayerBucket
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/{collectionId}
+            Method: DELETE
+
+  # GET v1/collection/all
+  CollectionAllRetrievalHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-all-retrieval-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionAllRetrievalHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/all
+            Method: GET
+
+  # POST v1/collection/complete
+  CollectionCompleteHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-complete-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionCompleteHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/complete
+            Method: POST
+
+  # POST v1/collection/failure
+  CollectionFailureHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-failure-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionFailureHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/failure
+            Method: POST
+
+  # POST v1/collection/image
+  CollectionImageAddHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-image-add-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionImageAddHandler'
+      Policies:
+      - S3FullAccessPolicy:
+          BucketName: !Ref LayerBucket
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/image
+            Method: POST
+
+  # DELETE v1/collection/image/{collectionId}/{layerId}/{imageName}
+  CollectionImageRemoveHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-image-remove-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionImageRemoveHandler'
+      Policies:
+      - S3FullAccessPolicy:
+          BucketName: !Ref LayerBucket   
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/image/{collectionId}/{layerId}/{imageName}
+            Method: DELETE
+
+  # GET v1/collection/image/{collectionId}/{layerId}/{imageName}
+  CollectionImageGetHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/collection-handlers/collection-image-get-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-CollectionImageGetHandler'
+      Policies:
+      - S3FullAccessPolicy:
+          BucketName: !Ref LayerBucket   
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /collection/image/{collectionId}/{layerId}/{imageName}
+            Method: GET
+
+# User handlers
+
+  # GET v1/user
+  UserRetrievalByTokenHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-handlers/user-retrieval-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserRetrievalByTokenHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: GET
+
+  # POST v1/user
+  UserCreateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-handlers/user-create-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserCreateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: POST
+            Auth:
+              Authorizer: NONE
+
+  # PUT v1/user
+  UserUpdateByTokenHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-handlers/user-update-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserUpdateByTokenHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: PUT
+
+  # POST v1/user/upgrade
+  UserPricingUpgradeHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-handlers/user-pricing-upgrade-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserPricingUpgradeHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user/upgrade
+            Method: POST
+
+  # POST v1/user/upgrade/coupon
+  UserUpgradeCouponValidationHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-handlers/user-coupon-validation-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserUpgradeCouponValidationHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user/upgrade/coupon
+            Method: POST
+
+# System Config handlers
+
+  # GET v1/sys-configs/{name}
+  SysConfigsRetrievalHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/sys-configs-handlers/sys-configs-retrieval-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-SysConfigsRetrievalHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /sys-configs/{name}
+            Method: GET
+
+  # PUT v1/sys-configs/{name}
+  SysConfigsUpdateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/sys-configs-handlers/sys-configs-update-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-SysConfigsUpdateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /sys-configs
+            Method: PUT
+
+  # Schedulled function to validate user billings
+  UserBillingValidationHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/sys-configs-handlers/user-billing-validation-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-UserBillingValidationHandler'
+
+  UserBillingValidationEventRule: 
+    Type: AWS::Events::Rule
+    Properties: 
+      State: "ENABLED"
+      ScheduleExpression: "rate(1 hour)"
+      Targets: 
+        - 
+          Arn: 
+            Fn::GetAtt: 
+              - "UserBillingValidationHandler"
+              - "Arn"
+          Id: "UserBillingValidationHandler"
+
+  PermissionUserBillingValidationHandler: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: 
+        Ref: "UserBillingValidationHandler"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - "UserBillingValidationEventRule"
+          - "Arn"
+
+
+# Payment handlers
+
+  # POST v1/payment/checkout
+  PaymentCheckoutHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/payment-handlers/checkout-handler.handler
+      FunctionName: !Sub 'mo-${EnvironmentName}-PaymentCheckoutHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /payment/checkout
+            Method: POST
+            # @TEMPORY
+            Auth:
+              Authorizer: NONE
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  StageName:
+    Type: String
+  ApiGatewayName:
+    Type: String
+  MongoPath:
+    Type: String
+  CognitoUserPoolId:
+    Type: String
+  CognitoUserPoolClient:
+    Type: String
+  LayerBucket:
+    Type: String
+  StripeSecretKey:
+    Type: String
