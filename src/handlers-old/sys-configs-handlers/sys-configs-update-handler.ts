@@ -1,11 +1,11 @@
-import { PricingPlanName } from "../../models/common";
-import { entity } from "../../models/entities";
+import { PricingPlanName } from "@mintoven/common";
 import { ingress } from "../../models/ingress";
 import { SysConfigsService } from "../../services/sys-config-service";
 import { UserService } from "../../services/user-service";
 import { ValidationError } from "../../utils/exceptions";
 import { respondError, respondSuccess } from "../../utils/response-generator";
 import { validateAllowedFields, validateRequiredFields } from "../../validation/utils";
+import { SystemConfigModel, UserModel } from "src/models/entities";
 
 
 // SysConfigsUpdateHandler
@@ -18,7 +18,7 @@ export const handler = async (event, _context) => {
         validateRequiredFields(requestBody, ["value", "name"]);
         validateAllowedFields(requestBody, ["value", "name"]);
 
-        const systemConfig = requestBody as entity.SystemConfig;
+        const systemConfig = requestBody as SystemConfigModel;
 
         if (systemConfig.name == "pricing-plans") {
             validateRequiredFields(systemConfig.value, [PricingPlanName.FREE, PricingPlanName.STANDARD, PricingPlanName.PREMIUM]);
@@ -45,7 +45,7 @@ export const handler = async (event, _context) => {
         }
 
         const userService = new UserService();
-        const requestedUser: entity.User = await userService.getUserByToken(event.headers.Authorization);
+        const requestedUser: UserModel = await userService.getUserByToken(event.headers.Authorization);
 
         const sysConfigService = new SysConfigsService();
         const updatedConfigs = await sysConfigService.updateSysConfigs(systemConfig, requestedUser);

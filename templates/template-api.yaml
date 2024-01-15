@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  RestApiTemplate:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./template-rest-api.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        StageName: !Ref StageName
+        ApiGatewayName: !Ref ApiGatewayName
+        CognitoUserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
+        UserRetrievalByTokenHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserRetrievalByTokenHandler
+        UserUpdateByTokenHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserUpdateByTokenHandler
+        UserCreateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserCreateHandler
+        SysConfigsRetrievalHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsRetrievalHandler
+        SysConfigsUpdateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsUpdateHandler
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  StageName:
+    Type: String
+  ApiGatewayName:
+    Type: String
+  CognitoUserPoolId:
+    Type: String

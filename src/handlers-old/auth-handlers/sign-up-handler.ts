@@ -1,12 +1,12 @@
 import 'source-map-support/register';
 
 import { respondError, respondSuccess } from '../../utils/response-generator';
-import { entity } from '../../models/entities';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ingress } from '../../models/ingress';
 import { validateRequiredFields } from '../../validation/utils';
 import { UserService } from '../../services/user-service';
 import { AuthenticationError } from '../../utils/exceptions';
+import { UserModel } from 'src/models/entities';
 
 
 // UserSignUpHandler
@@ -19,7 +19,7 @@ export const handler = async (event, _context) => {
     try {
         validateRequiredFields(newUser, ["name", "email", "password"]);
 
-        let userRecord: entity.User = await userService.createNewUser(newUser);
+        let userRecord: UserModel = await userService.createNewUser(newUser);
         const userId = UserService.getEntityKey(userRecord);
 
         try {

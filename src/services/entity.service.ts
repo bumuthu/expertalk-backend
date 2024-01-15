@@ -1,4 +1,4 @@
-import { entity } from "../models/entities";
+import { Entity } from "src/models/entities";
 import connectToTheDatabase from "../utils/mongo-connection";
 
 export class EntityService {
@@ -12,7 +12,7 @@ export class EntityService {
     async after() {
     }
 
-    static getEntityKey(data: entity.Entity): string {
+    static getEntityKey(data: Entity): string {
         return data["_id"] as string
     }
 }

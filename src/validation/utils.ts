@@ -1,5 +1,4 @@
 import { ingress } from "../models/ingress";
-import { CollectionService } from "../services/collection-service";
 import { UserService } from "../services/user-service";
 import { ValidationError } from "../utils/exceptions";
 
@@ -58,22 +57,4 @@ export function enrichRequest(authToken: string, request?: ingress.Request): ing
     }
     request.userId = userId;
     return request;
-}
-
-export async function validateCollectionOverUserId(userId: string, collectionId: string): Promise<void> {
-    
-    console.log(`User ID: [${userId}], Collection ID: [${collectionId}]`);
-
-    if (collectionId == null || userId == null) {
-        throw new ValidationError("You're not permitted to perform on this collection");
-    }
-
-    const collectionService = new CollectionService();
-    const collection = await collectionService.getCollection(collectionId);
-
-    console.log(`Collection User ID: [${collection.userId}]`);
-    
-    if (collection.userId != userId) {
-        throw new ValidationError("You're not permitted to perform on this collection");
-    }
-}   
+}  

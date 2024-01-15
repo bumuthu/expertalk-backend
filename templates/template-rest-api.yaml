@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  # REST API
+  RESTApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub '${ApiGatewayName}-rest'
+
+  # Authorizer
+  RESTAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      RestApiId: !Ref RESTApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - !Ref CognitoUserPoolArn
+      IdentitySource: method.request.header.Authorization
+      Name: !Sub "talk-${EnvironmentName}-api-auth"
+
+  # Deployment
+  RESTApiDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    DependsOn:
+      - UserRetrievalGET
+      - UserCreatePOST
+      - UserUpdatePUT
+      - SysConfigsGET
+      - SysConfigsPUT
+    Properties:
+      RestApiId: !Ref RESTApi
+      StageName: !Ref StageName
+
+  # Path Resources
+  VersionResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt RESTApi.RootResourceId
+      RestApiId: !Ref RESTApi
+      PathPart: v1
+
+  # Path Resources: User
+  UserResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref VersionResource
+      RestApiId: !Ref RESTApi
+      PathPart: user
+
+  # Path Resources: System configs
+  SysConfigResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref VersionResource
+      RestApiId: !Ref RESTApi
+      PathPart: sys-configs
+  SysConfigNameResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref SysConfigResource
+      RestApiId: !Ref RESTApi
+      PathPart: "{name}"
+
+  # Methods
+  # User
+  UserRetrievalGET:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - UserResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref UserResource
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserRetrievalByTokenHandlerArn}/invocations 
+
+  UserCreatePOST:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - UserResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref UserResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserCreateHandlerArn}/invocations 
+
+  UserUpdatePUT:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - UserResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref UserResource
+      HttpMethod: PUT
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserUpdateByTokenHandlerArn}/invocations 
+
+  # Methods: Pricing Plan
+  SysConfigsGET:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - SysConfigNameResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref SysConfigNameResource
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      RequestParameters:
+        method.request.path.name: 
+          Required: true
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        RequestParameters:
+          integration.request.path.name: 'method.request.path.name'
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SysConfigsRetrievalHandlerArn}/invocations 
+
+  SysConfigsPUT:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - SysConfigResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref SysConfigResource
+      HttpMethod: PUT
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SysConfigsUpdateHandlerArn}/invocations 
+
+  # Permissions
+  UserRetrievalByTokenHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UserRetrievalByTokenHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  UserCreateHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UserCreateHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  UserUpdateByTokenHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UserUpdateByTokenHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  SysConfigsRetrievalHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SysConfigsRetrievalHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  SysConfigsUpdateHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SysConfigsUpdateHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  StageName:
+    Type: String
+  ApiGatewayName:
+    Type: String
+  CognitoUserPoolArn:
+    Type: String
+  UserRetrievalByTokenHandlerArn:
+    Type: String
+  UserUpdateByTokenHandlerArn:
+    Type: String
+  UserCreateHandlerArn:
+    Type: String
+  SysConfigsRetrievalHandlerArn:
+    Type: String
+  SysConfigsUpdateHandlerArn:
+    Type: String

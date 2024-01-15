@@ -6,7 +6,7 @@ const connectToTheDatabase = async () => {
     console.log("Mongo URL:", MONGO_PATH);
 
     if ([1, 2].includes(mongoose.connection.readyState) == false) {
-        await mongoose.connect(MONGO_PATH, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+        await mongoose.connect(MONGO_PATH)
             .then(res => console.log('Connected to db'))
             .catch(err => console.log(err));
     }

@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { entity } from '../entities';
+import { SystemConfigModel } from '../entities';
 
-export interface SysConfigDocument extends Document, entity.SystemConfig { }
+export interface SysConfigDocument extends Document, SystemConfigModel { }
 
 const systemConfig = new Schema({
     name: String,

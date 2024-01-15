@@ -1,14 +1,14 @@
-import { entity } from "../models/entities";
+import { SysConfigName } from "src/models/enums";
 import connectToTheDatabase from "../utils/mongo-connection";
 import { EntityService } from "./entity.service";
 import { SysConfigsService } from "./sys-config-service";
+import { Monitoring } from "src/models/entities";
 const nodemailer = require('nodemailer');
 
-const MINTOON_HOST = "mintoon.io";
 
 export enum EmailSubject {
-    NEW_USER_REGISTRATION = "MINTOON ALERT: New User Registration",
-    USER_UPGRADE = "MINTOON ALERT: An User Upgrade",
+    NEW_USER_REGISTRATION = "EXPERTALK ALERT: New User Registration",
+    USER_UPGRADE = "EXPERTALK ALERT: An User Upgrade",
 }
 
 export class MonitoringService extends EntityService {
@@ -41,10 +41,10 @@ export class MonitoringService extends EntityService {
             await this.before();
 
             const systemService = new SysConfigsService();
-            const monitoringConfigs: entity.Monitoring = await systemService.getSysConfigs("monitoring") as entity.Monitoring;
+            const monitoringConfigs: Monitoring = await systemService.getSysConfigs(SysConfigName.MONITORING) as Monitoring;
 
             const transporter = nodemailer.createTransport({
-                host: MINTOON_HOST,
+                host: process.env.APP_HOST_URL,
                 port: 465,
                 secure: true,
                 auth: {

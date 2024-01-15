@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 30
+    Runtime: nodejs14.x
+    CodeUri: .
+    Environment:
+      Variables:
+        MO_AWS_REGION: !Sub ${AWS::Region}
+        MO_ENV_NAME: !Sub ${EnvironmentName}
+        MO_AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
+        MO_MONGO_PATH: !Sub ${MongoPath}
+        MO_COGNITO_USER_POOL_ID: !Sub ${CognitoUserPoolId}
+        MO_COGNITO_USER_POOL_CLIENT: !Sub ${CognitoUserPoolClient}
+        MO_STRIPE_SECRET_KEY: !Sub ${StripeSecretKey}
+
+Resources:
+  # API resource
+  RESTApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${ApiGatewayName}-rest'
+      StageName: !Ref StageName
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
+
+
+# User handlers
+
+  # GET v1/user
+  UserRetrievalByTokenHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-workspace-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-UserRetrievalByTokenHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: GET
+
+  # POST v1/user
+  UserCreateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-workspace-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-UserCreateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: POST
+            Auth:
+              Authorizer: NONE
+
+  # PUT v1/user
+  UserUpdateByTokenHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/user-workspace-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-UserUpdateByTokenHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: PUT
+
+
+# System Config handlers
+
+  # GET v1/sys-configs/{name}
+  SysConfigsRetrievalHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/sys-configs-handlers/sys-configs-retrieval-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-SysConfigsRetrievalHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /sys-configs/{name}
+            Method: GET
+
+  # PUT v1/sys-configs/{name}
+  SysConfigsUpdateHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/sys-configs-handlers/sys-configs-update-handler.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-SysConfigsUpdateHandler'
+      Events:
+        HttpEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /sys-configs
+            Method: PUT
+
+  # Schedulled function to validate user billings
+  # UserBillingValidationHandler:
+  #   Type: 'AWS::Serverless::Function'
+  #   Properties:
+  #     Handler: lib/handlers/sys-configs-handlers/user-billing-validation-handler.handler
+  #     FunctionName: !Sub 'talk-${EnvironmentName}-UserBillingValidationHandler'
+
+  # UserBillingValidationEventRule: 
+  #   Type: AWS::Events::Rule
+  #   Properties: 
+  #     State: "ENABLED"
+  #     ScheduleExpression: "rate(1 hour)"
+  #     Targets: 
+  #       - 
+  #         Arn: 
+  #           Fn::GetAtt: 
+  #             - "UserBillingValidationHandler"
+  #             - "Arn"
+  #         Id: "UserBillingValidationHandler"
+
+  # PermissionUserBillingValidationHandler: 
+  #   Type: AWS::Lambda::Permission
+  #   Properties: 
+  #     FunctionName: 
+  #       Ref: "UserBillingValidationHandler"
+  #     Action: "lambda:InvokeFunction"
+  #     Principal: "events.amazonaws.com"
+  #     SourceArn: 
+  #       Fn::GetAtt: 
+  #         - "UserBillingValidationEventRule"
+  #         - "Arn"
+
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  StageName:
+    Type: String
+  ApiGatewayName:
+    Type: String
+  MongoPath:
+    Type: String
+  CognitoUserPoolId:
+    Type: String
+  CognitoUserPoolClient:
+    Type: String
+  StripeSecretKey:
+    Type: String

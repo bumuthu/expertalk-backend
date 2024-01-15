@@ -1,33 +1,20 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { entity } from '../entities';
+import { UserModel } from '../entities';
 
-export interface UserDocument extends Document, entity.User { }
+export interface UserDocument extends Document, UserModel { }
 
 const userSchema = new Schema({
     name: String,
     email: String,
     cognitoUserSub: String,
-    authType: String,
-    collectionIds: [String],
+    workspaceIds: [String],
+    knowledgeIds: [Schema.Types.Mixed],
     notifications: [{
         timestamp: Number,
         title: String,
         description: String
     }],
-    history: [Schema.Types.Mixed],
-    paymentHistory: [{
-        status: String,
-        stripeSessionId: String,
-        timestamp: Number,
-        renew: Boolean
-    }],
-    collectionAttemptsUsed: Number,
-    currentPlan: String,
-    planValidTill: Number,
-    billingStartsAt: Number,
-    billingEndsAt: Number
 });
-
 
 const UserDBModel = mongoose.model<UserDocument>('User', userSchema);
 

@@ -1,12 +1,12 @@
 import 'source-map-support/register';
 
 import { respondError, respondSuccess } from '../../utils/response-generator';
-import { entity } from '../../models/entities';
 import { ingress } from '../../models/ingress';
 import { validateRequiredFields } from '../../validation/utils';
 import { UserService } from '../../services/user-service';
 import { AuthenticationError } from '../../utils/exceptions';
 import { AuthenticationService } from '@mintoven/common';
+import { UserModel } from 'src/models/entities';
 
 const POOL_ID = process.env.MO_COGNITO_USER_POOL_ID;
 const CLIENT_ID = process.env.MO_COGNITO_USER_POOL_CLIENT;
@@ -20,7 +20,7 @@ export const handler = async (event, _context) => {
     try {
         validateRequiredFields(newUser, ["name", "email", "password"]);
 
-        let userRecord: entity.User = await userService.createNewUser(newUser);
+        let userRecord: UserModel = await userService.createNewUser(newUser);
         const userId = UserService.getEntityKey(userRecord);
 
         const signUpRes: any = await authService.signUp(newUser.email, newUser.password, userId);
