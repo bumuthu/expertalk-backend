@@ -1,34 +1,39 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { UserService } from "../services/user-service";
-import { multiHandler } from "../utils/handlers"
+import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 import { UserModel } from "../models/entities";
 
 
-const retrieveUser = async (event: APIGatewayProxyEvent) => {
+const retrieveUser = async (event: any) => {
     const userService = new UserService();
     const user: UserModel = await userService.getUserByToken(event.headers.Authorization);
     return user;
 }
 
-const updateUser = async (event: APIGatewayProxyEvent) => {
+const updateUser = async (event: any) => {
     return null;
 }
 
-const createWorkspace = async (event: APIGatewayProxyEvent) => {
+const createWorkspace = async (event: any) => {
     return null;
 }
 
-const updateWorkspace = async (event: APIGatewayProxyEvent) => {
+const updateWorkspace = async (event: any) => {
     return null;
 }
 
-const handlerSelector: Record<string, (event: APIGatewayProxyEvent) => Promise<any>> = {
-    ["POST:/user"]: retrieveUser,
-    ["PUT:/user"]: updateUser,
-    ["POST:/workspace"]: createWorkspace,
-    ["PUT:/workspace"]: updateWorkspace,
+const handlerSelector = (key: string): HandlerFunctionType => {
+    switch (key) {
+        case "GET:/user":
+            return retrieveUser;
+        case "PUT:/user":
+            return updateUser;
+        case "POST:/workspace":
+            return createWorkspace;
+        case "PUT:/workspace":
+            return updateWorkspace;
+    }
 }
 
-export const handler = async (event: APIGatewayProxyEvent, _context): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: any, _context): Promise<any> => {
     return multiHandler(event, handlerSelector);
 }

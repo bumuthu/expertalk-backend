@@ -8,8 +8,8 @@ import { AuthenticationError } from '../../utils/exceptions';
 import { AuthenticationService } from '@mintoven/common';
 import { UserModel } from 'src/models/entities';
 
-const POOL_ID = process.env.MO_COGNITO_USER_POOL_ID;
-const CLIENT_ID = process.env.MO_COGNITO_USER_POOL_CLIENT;
+const POOL_ID = process.env.TALK_COGNITO_USER_POOL_ID;
+const CLIENT_ID = process.env.TALK_COGNITO_USER_POOL_CLIENT;
 
 // UserCreateHandler
 export const handler = async (event, _context) => {

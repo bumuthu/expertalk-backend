@@ -1,8 +1,8 @@
-import { SysConfigName } from "src/models/enums";
+import { SysConfigName } from "../models/enums";
 import connectToTheDatabase from "../utils/mongo-connection";
 import { EntityService } from "./entity.service";
 import { SysConfigsService } from "./sys-config-service";
-import { Monitoring } from "src/models/entities";
+import { Monitoring } from "../models/entities";
 const nodemailer = require('nodemailer');
 
 
@@ -33,7 +33,7 @@ export class MonitoringService extends EntityService {
     }
 
     async sendAdminEmail(subject: EmailSubject, details: Record<string, string>) {
-        if (process.env.MO_ENV_NAME != "app") {
+        if (process.env.TALK_ENV_NAME != "app") {
             return;
         }
 

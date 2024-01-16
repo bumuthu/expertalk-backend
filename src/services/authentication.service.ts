@@ -7,8 +7,8 @@ export enum PasswordChallenge {
     SMS_MFA = 'SMS_MFA',
 }
 
-const POOL_ID = process.env.MO_COGNITO_USER_POOL_ID;
-const CLIENT_ID = process.env.MO_COGNITO_USER_POOL_CLIENT;
+const POOL_ID = process.env.TALK_COGNITO_USER_POOL_ID;
+const CLIENT_ID = process.env.TALK_COGNITO_USER_POOL_CLIENT;
 
 
 export class AuthenticationService extends EntityService {

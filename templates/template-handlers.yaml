@@ -5,17 +5,17 @@ Globals:
   Function:
     MemorySize: 256
     Timeout: 30
-    Runtime: nodejs14.x
+    Runtime: nodejs20.x
     CodeUri: .
     Environment:
       Variables:
-        MO_AWS_REGION: !Sub ${AWS::Region}
-        MO_ENV_NAME: !Sub ${EnvironmentName}
-        MO_AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
-        MO_MONGO_PATH: !Sub ${MongoPath}
-        MO_COGNITO_USER_POOL_ID: !Sub ${CognitoUserPoolId}
-        MO_COGNITO_USER_POOL_CLIENT: !Sub ${CognitoUserPoolClient}
-        MO_STRIPE_SECRET_KEY: !Sub ${StripeSecretKey}
+        TALK_AWS_REGION: !Sub ${AWS::Region}
+        TALK_ENV_NAME: !Sub ${EnvironmentName}
+        TALK_AWS_ACCOUNT_ID: !Sub ${AWS::AccountId}
+        TALK_MONGO_PATH: !Sub ${MongoPath}
+        TALK_COGNITO_USER_POOL_ID: !Sub ${CognitoUserPoolId}
+        TALK_COGNITO_USER_POOL_CLIENT: !Sub ${CognitoUserPoolClient}
+        TALK_STRIPE_SECRET_KEY: !Sub ${StripeSecretKey}
 
 Resources:
   # API resource

@@ -1,28 +1,33 @@
-import { APIGatewayProxyEvent } from "aws-lambda";
-import { multiHandler } from "../utils/handlers"
+import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 
 
-const createUser = async (event: APIGatewayProxyEvent) => {
+const createUser = async (event: any) => {
     return null;
 }
 
-const retrieveKnowledges = async (event: APIGatewayProxyEvent) => {
+const retrieveKnowledges = async (event: any) => {
     return null;
 }
 
-const retrieveKnowledgeChats = async (event: APIGatewayProxyEvent) => {
+const retrieveKnowledgeChats = async (event: any) => {
     return null;
 }
 
-const retrieveCategories = async (event: APIGatewayProxyEvent) => {
+const retrieveCategories = async (event: any) => {
     return null;
 }
 
-const handlerSelector: Record<string, (event: APIGatewayProxyEvent) => Promise<any>> = {
-    ["POST:/public/user"]: createUser,
-    ["POST:/public/knowledges"]: retrieveKnowledges,
-    ["POST:/public/chats"]: retrieveKnowledgeChats,
-    ["GET:/public/categories"]: retrieveCategories,
+const handlerSelector = (key: string): HandlerFunctionType => {
+    switch (key) {
+        case "POST:/public/user":
+            return createUser;
+        case "POST:/public/knowledges":
+            return retrieveKnowledges;
+        case "POST:/public/chats":
+            return retrieveKnowledgeChats;
+        case "GET:/public/categories":
+            return retrieveCategories;
+    }
 }
 
 export const handler = async (event, _context) => {

@@ -6,8 +6,8 @@
 // import { EntityService } from "./entity.service";
 // import { SysConfigsService } from "./sys-config-service";
 
-// const stripe = require('stripe')(process.env.MO_STRIPE_SECRET_KEY);
-// const envUrl = `https://${process.env.MO_ENV_NAME}.mintoon.io`;
+// const stripe = require('stripe')(process.env.TALK_STRIPE_SECRET_KEY);
+// const envUrl = `https://${process.env.TALK_ENV_NAME}.mintoon.io`;
 
 // export class PaymentService extends EntityService {
 //     constructor() {

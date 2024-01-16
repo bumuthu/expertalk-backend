@@ -4,14 +4,14 @@ import { ingress } from "../models/ingress";
 import { AuthenticationError, DataNotFoundError, InternalServerError, KnownError, ValidationError } from "../utils/exceptions";
 import { EntityService } from "./entity.service";
 import { EmailSubject, MonitoringService } from "./monitoring-service";
-import { UserModel } from "src/models/entities";
+import { UserModel } from "../models/entities";
 
 const MONTH_IN_MS = 30.5 * 24 * 3600 * 1000;
 const YEAR_IN_MS = 12 * 30.5 * 24 * 3600 * 1000;
 
 export class UserService extends EntityService {
 
-    constructor() {
+    constructor() {                 
         super();
     }
 
@@ -23,8 +23,8 @@ export class UserService extends EntityService {
         const decodedUser: any = jwt_decode(accessToken);
         console.log("Decoded user:", decodedUser);
 
-        const user: UserModel = await UserDBModel.findOne({ cognitoUserSub: decodedUser.sub });
-        if (!user) throw new DataNotFoundError("User not found in the system");
+        const user: UserModel = await UserDBModel.findOne({ cognitoUserSub: decodedUser.sub });                                   
+        if (!user) throw new DataNotFoundError("User not found in the system");                    
 
         return user;
     }
@@ -106,7 +106,7 @@ export class UserService extends EntityService {
         const emailBody = {
             "Email Address": user.email,
             "User ID": user._id,
-            "Environment": process.env.MO_ENV_NAME,
+            "Environment": process.env.TALK_ENV_NAME,
             "Time": (new Date()).toString()
         }
         const monitoringService = new MonitoringService();

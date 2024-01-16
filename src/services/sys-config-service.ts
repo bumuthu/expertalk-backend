@@ -1,4 +1,4 @@
-import { SysConfigName } from "src/models/enums";
+import { SysConfigName } from "../models/enums";
 import SysConfigDBModel from "../models/db/sys-config.model";
 import { InternalServerError, KnownError, ValidationError } from "../utils/exceptions";
 import connectToTheDatabase from "../utils/mongo-connection";
