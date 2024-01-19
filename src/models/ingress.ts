@@ -38,9 +38,31 @@ export namespace ingress {
     // Workspace related
     export interface WorkspaceCreateInput extends Request {
         name: string,
+        admins: string[],
+        members: string[],
     }
     export interface WorkspaceUpdateInput extends Request {
         workspaceId: string,
-        name: string,
+        name?: string,
     }
+
+    // Knowledge related
+    export interface KnowledgeCreateInput extends Request {
+        title: string,
+        description: string,
+        public: boolean,
+        workspace?: string,
+        categories: string[]
+    } 
+    export interface KnowledgeUpdateInput extends Request {
+        knowledgeId: string,
+        title?: string,
+        description?: string,
+        public?: boolean,
+        categories?: string[]
+    } 
+    export interface KnowledgeQueryInput extends Request {
+        knowledgeId?: string, // returns this knowledge
+        workspaceId?: string // returns all knowledges of ws
+    } 
 }

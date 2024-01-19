@@ -3,10 +3,6 @@ import { SysConfigName, UploadStatus } from "./enums";
 
 export class Entity {
     _id?: any;
-
-    // getId?(): string {
-    //     return this._id;
-    // }
 }
 
 // User related

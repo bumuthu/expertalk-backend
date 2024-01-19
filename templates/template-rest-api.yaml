@@ -71,6 +71,22 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: workspace
 
+  # /v1/knowledge
+  KnowledgeResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref VersionResource
+      RestApiId: !Ref RESTApi
+      PathPart: knowledge
+
+  # /v1/knowledge/query
+  KnowledgeQueryResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref WorkspaceResource
+      RestApiId: !Ref RESTApi
+      PathPart: query
+
   # Path Resources: System configs
   SysConfigResource:
     Type: AWS::ApiGateway::Resource
@@ -204,6 +220,66 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserWorkspaceHandlerArn}/invocations 
 
+  KnowledgeCreate:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - KnowledgeResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref KnowledgeResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${KnowledgeHandlerArn}/invocations 
+
+  KnowledgeUpdate:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - KnowledgeResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref KnowledgeResource
+      HttpMethod: PUT
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${KnowledgeHandlerArn}/invocations 
+
+  KnowledgeQuery:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - KnowledgeQueryResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref KnowledgeQueryResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${KnowledgeHandlerArn}/invocations 
+
 
   # Methods: Pricing Plan
   SysConfigsGET:
@@ -305,7 +381,7 @@ Parameters:
     Type: String
   PublicHandlerArn:
     Type: String
-  UserCreateHandlerArn:
+  KnowledgeHandlerArn:
     Type: String
   SysConfigsRetrievalHandlerArn:
     Type: String

@@ -87,21 +87,30 @@ Resources:
             Path: /workspace
             Method: GET
 
-  # POST v1/user
-  UserCreateHandler:
+  KnowledgeHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: lib/handlers/user-workspace-handlers.handler
-      FunctionName: !Sub 'talk-${EnvironmentName}-UserCreateHandler'
+      Handler: lib/handlers/knowledge-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-KnowledgeHandler'
       Events:
-        HttpEvent:
+        CreateKnowledge:
           Type: Api
           Properties:
             RestApiId: !Ref RESTApi
-            Path: /user
+            Path: /knowledge
             Method: POST
-            Auth:
-              Authorizer: NONE
+        UpdateKnowledge:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /knowledge
+            Method: PUT
+        QueryKnowledge:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /knowledge/query
+            Method: POST
 
   # PUT v1/user
   UserUpdateByTokenHandler:

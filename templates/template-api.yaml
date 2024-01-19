@@ -12,7 +12,7 @@ Resources:
         ApiGatewayName: !Ref ApiGatewayName
         CognitoUserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
         UserWorkspaceHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserWorkspaceHandler
-        UserUpdateByTokenHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserUpdateByTokenHandler
+        KnowledgeHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-KnowledgeHandler
         UserCreateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserCreateHandler
         SysConfigsRetrievalHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsRetrievalHandler
         SysConfigsUpdateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsUpdateHandler
