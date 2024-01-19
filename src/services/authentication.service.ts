@@ -1,6 +1,5 @@
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import { AuthenticationError } from '../utils/exceptions';
-import { EntityService } from './entity.service';
 
 export enum PasswordChallenge {
     NEW_PASSWORD_REQUIRED = 'NEW_PASSWORD_REQUIRED',
@@ -11,13 +10,12 @@ const POOL_ID = process.env.TALK_COGNITO_USER_POOL_ID;
 const CLIENT_ID = process.env.TALK_COGNITO_USER_POOL_CLIENT;
 
 
-export class AuthenticationService extends EntityService {
+export class AuthenticationService {
 
     private userPool: CognitoUserPool;
     private cognitoUser: CognitoUser;
 
     constructor() {
-        super();
         this.userPool = new CognitoUserPool({
             UserPoolId: POOL_ID,
             ClientId: CLIENT_ID,

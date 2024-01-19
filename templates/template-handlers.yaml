@@ -36,21 +36,38 @@ Resources:
             UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
 
 
-# User handlers
+  # Handlers
+  PublicHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/public-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-PublicHandler'
+      Events:
+        PublicUserCreateEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /public/user
+            Method: POST
 
-  # GET v1/user
-  UserRetrievalByTokenHandler:
+  UserWorkspaceHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: lib/handlers/user-workspace-handlers.handler
-      FunctionName: !Sub 'talk-${EnvironmentName}-UserRetrievalByTokenHandler'
+      FunctionName: !Sub 'talk-${EnvironmentName}-UserWorkspaceHandler'
       Events:
-        HttpEvent:
+        GetUserEvent:
           Type: Api
           Properties:
             RestApiId: !Ref RESTApi
             Path: /user
             Method: GET
+        UpdateUserEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /user
+            Method: PUT
 
   # POST v1/user
   UserCreateHandler:

@@ -1,5 +1,5 @@
 import jwt_decode from "jwt-decode";
-import UserDBModel from "../models/db/user.model";
+import UserDBModel, { UserDocument } from "../models/db/user.model";
 import { ingress } from "../models/ingress";
 import { AuthenticationError, DataNotFoundError, InternalServerError, KnownError, ValidationError } from "../utils/exceptions";
 import { EntityService } from "./entity.service";
@@ -9,11 +9,7 @@ import { UserModel } from "../models/entities";
 const MONTH_IN_MS = 30.5 * 24 * 3600 * 1000;
 const YEAR_IN_MS = 12 * 30.5 * 24 * 3600 * 1000;
 
-export class UserService extends EntityService {
-
-    constructor() {                 
-        super();
-    }
+export class UserService extends EntityService<UserModel, UserDocument> {
 
     async getUserByToken(accessToken: string): Promise<UserModel> {
         await this.before();
@@ -41,9 +37,8 @@ export class UserService extends EntityService {
 
 
     getUserIdByToken(accessToken: string): string {
-
         if (!accessToken) throw new AuthenticationError("Null access token found");
-
+        
         const decodedUser: any = jwt_decode(accessToken);
         console.log("Decoded user:", decodedUser);
         const userId: string = decodedUser["custom:user_id"];
@@ -113,30 +108,6 @@ export class UserService extends EntityService {
         await monitoringService.sendAdminEmail(EmailSubject.NEW_USER_REGISTRATION, emailBody).catch((err) => { console.log("Error while admin email", err) });
 
         return user;
-    }
-
-    async updateUser(userId: string, update: any): Promise<UserModel> {
-        try {
-            await this.before();
-
-            return UserDBModel.findByIdAndUpdate(userId, update, { new: true });
-        } catch (e) {
-            console.error(e);
-            if (e.knownError) throw new KnownError(e.status, e.code, e.message);
-            throw new InternalServerError();
-        }
-    }
-
-    async deleteUser(userId: string): Promise<UserModel> {
-        try {
-            await this.before();
-
-            return UserDBModel.findByIdAndDelete(userId);
-        } catch (e) {
-            console.error(e);
-            if (e.knownError) throw new KnownError(e.status, e.code, e.message);
-            throw new InternalServerError();
-        }
     }
 
     // async upgradePricing(userId: string): Promise<UserModel> {

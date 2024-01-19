@@ -17,7 +17,7 @@ export const handler = async (event, _context) => {
         console.log("Modification request:", userModificationReq)
 
         const userService = new UserService();
-        const updatedUser = await userService.updateUser(userModificationReq.userId, userModificationReq);
+        const updatedUser = await userService.update(userModificationReq.userId, userModificationReq);
 
         return respondSuccess(updatedUser)
     } catch (err) {

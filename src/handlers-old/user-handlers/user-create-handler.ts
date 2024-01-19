@@ -34,12 +34,12 @@ export const handler = async (event, _context) => {
                 console.error("Emails:", signUpRes.response.user?.username, newUser.email)
                 throw new AuthenticationError("Email was not preperly set");
             }
-            const updatedUser = await userService.updateUser(userId, { cognitoUserSub: signUpRes.response.userSub });
+            const updatedUser = await userService.update(userId, { cognitoUserSub: signUpRes.response.userSub });
             console.log("Updated user:", updatedUser);
             return respondSuccess(updatedUser);
 
         } catch (err) {
-            const deletedDBResponse = await userService.deleteUser(userId);
+            const deletedDBResponse = await userService.delete(userId);
             console.log("Deleted DB response:", deletedDBResponse);
 
             const deletedCognitoRes = await authService.deleteUser();

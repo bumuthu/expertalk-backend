@@ -1,6 +1,5 @@
 import { SysConfigName } from "../models/enums";
 import connectToTheDatabase from "../utils/mongo-connection";
-import { EntityService } from "./entity.service";
 import { SysConfigsService } from "./sys-config-service";
 import { Monitoring } from "../models/entities";
 const nodemailer = require('nodemailer');
@@ -11,10 +10,7 @@ export enum EmailSubject {
     USER_UPGRADE = "EXPERTALK ALERT: An User Upgrade",
 }
 
-export class MonitoringService extends EntityService {
-    constructor() {
-        super();
-    }
+export class MonitoringService {
 
     async before() {
         await connectToTheDatabase();

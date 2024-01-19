@@ -28,9 +28,9 @@ export const handler = async (event, _context) => {
 
             if (cognitoRes.user?.username != newUser.email) throw new AuthenticationError(cognitoRes.message);
 
-            userRecord = await userService.updateUser(userId, { cognitoUserSub: cognitoRes.userSub });
+            userRecord = await userService.update(userId, { cognitoUserSub: cognitoRes.userSub });
         } catch (err) {
-            await userService.deleteUser(userId);
+            await userService.delete(userId);
             throw new AuthenticationError(err.message);
         }
         response = userRecord;

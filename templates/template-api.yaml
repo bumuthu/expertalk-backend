@@ -11,7 +11,7 @@ Resources:
         StageName: !Ref StageName
         ApiGatewayName: !Ref ApiGatewayName
         CognitoUserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
-        UserRetrievalByTokenHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserRetrievalByTokenHandler
+        UserWorkspaceHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserWorkspaceHandler
         UserUpdateByTokenHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserUpdateByTokenHandler
         UserCreateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserCreateHandler
         SysConfigsRetrievalHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsRetrievalHandler

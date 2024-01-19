@@ -5,10 +5,7 @@ import connectToTheDatabase from "../utils/mongo-connection";
 import { EntityService } from "./entity.service";
 import { SystemConfigModel, UserModel } from "src/models/entities";
 
-export class SysConfigsService extends EntityService {
-    constructor() {
-        super();
-    }
+export class SysConfigsService {
 
     async before() {
         await connectToTheDatabase();
