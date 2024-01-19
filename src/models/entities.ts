@@ -11,8 +11,8 @@ export class Entity {
 
 // User related
 export interface KnowledgeChat {
-    knowledgeId: string,
-    chatIds: string[]
+    knowledge: string | KnowledgeModel,
+    chats: (string | ChatModel)[]
 }
 export interface Notification {
     timestamp: number,
@@ -23,8 +23,8 @@ export interface UserModel extends Entity {
     name: string,
     email: string,
     cognitoUserSub: string,
-    workspaceIds: string[],
-    knowledgeChatIds: KnowledgeChat[]
+    workspaces: (string | WorkspaceModel)[],
+    knowledgeChats: KnowledgeChat[]
     notifications: Notification[],
 }
 
@@ -39,9 +39,9 @@ export interface WorkspaceKnowledgeChat {
 // Workspace related
 export interface WorkspaceModel extends Entity {
     name: string,
-    ownerId: string,
-    adminIds: string[],
-    memberIds: string[],
+    owner: string | UserModel,
+    admins: (string | UserModel)[],
+    members: (string | UserModel)[],
     logoUrl?: string,
     tokens: WorkspaceToken
 }
@@ -52,10 +52,10 @@ export interface KnowledgeModel extends Entity {
     description: string,
     public: boolean,
     imageUrl?: string,
-    workspaceId?: string,
-    sourceIds: string[],
-    categories?: string[]
-    publicChats: string[]
+    workspace?: string | WorkspaceModel,
+    sources: string[],
+    categories?: (string | CategoryModel)[]
+    publicChats: (string | ChatModel)[]
 }
 
 // Chat related
@@ -63,8 +63,8 @@ export interface ChatModel extends Entity {
     message: string
     timestamp: number
     byBot: boolean,
-    userId?: string,
-    childChats: string[],
+    user?: string | UserModel,
+    parentChat?: string | ChatModel,
     public: boolean // To be used for security purposes
 }
 
@@ -76,6 +76,12 @@ export interface SourceModel extends Entity {
     key: string
     createdAt: number
     updatedAt: number
+}
+
+// Category related
+export interface CategoryModel extends Entity {
+    name: string,
+    childCategories?: (string | CategoryModel)[]
 }
 
 export interface Monitoring {

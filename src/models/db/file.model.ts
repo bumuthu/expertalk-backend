@@ -1,9 +1,9 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { SourceModel } from '../entities';
 
-export interface FileDocument extends Document, SourceModel { }
+export interface SourceDocument extends Document, SourceModel { }
 
-const FileSchema = new Schema({
+const sourceSchema = new Schema({
     name: String,
     uploadStatus: String,
     url: String,
@@ -12,6 +12,6 @@ const FileSchema = new Schema({
     updatedAt: Number,
 });
 
-const FileDBModel = mongoose.model<FileDocument>('File', FileSchema);
+const SourceDBModel = mongoose.model<SourceDocument>('Source', sourceSchema);
 
-export default FileDBModel;
+export default SourceDBModel;

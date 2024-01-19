@@ -3,12 +3,17 @@ import { UserModel } from '../entities';
 
 export interface UserDocument extends Document, UserModel { }
 
+const userKnowledgeChatSchema = new Schema({
+    knowledge: { type: mongoose.Schema.Types.ObjectId, ref: 'Knowledge' },
+    chats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }]
+})
+
 const userSchema = new Schema({
     name: String,
     email: String,
     cognitoUserSub: String,
-    workspaceIds: [String],
-    knowledgeIds: [Schema.Types.Mixed],
+    workspaces: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workspace' }],
+    knowledgeChats: [userKnowledgeChatSchema],
     notifications: [{
         timestamp: Number,
         title: String,

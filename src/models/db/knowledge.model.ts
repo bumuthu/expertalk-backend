@@ -7,8 +7,11 @@ const knowledgeSchema = new Schema({
     title: String,
     description: String,
     public: Boolean,
-    workspaceId: String,
-    fileIds: [String],
+    imageUrl: String,
+    workspace: { type: mongoose.Schema.Types.ObjectId, ref: 'Workspace' },
+    sources: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Source' }],
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+    publicChats: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }]
 });
 
 

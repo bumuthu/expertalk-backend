@@ -5,9 +5,9 @@ export interface WorkspaceDocument extends Document, WorkspaceModel { }
 
 const workspaceSchema = new mongoose.Schema({
     name: String,
-    ownerId: String,
-    adminIds: [String],
-    memberIds: [String],
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     logoUrl: String,
     tokens: {
         openAI: String

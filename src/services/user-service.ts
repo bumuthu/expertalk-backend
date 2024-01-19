@@ -91,9 +91,9 @@ export class UserService extends EntityService {
         const newUserDB: UserModel = {
             name: newUser.name,
             email: newUser.email,
-            workspaceIds: [],
+            workspaces: [],
             cognitoUserSub: '',
-            knowledgeChatIds: [],
+            knowledgeChats: [],
             notifications: [{
                 timestamp,
                 title: `Welcome to ExperTalk!`,
