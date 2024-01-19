@@ -1,9 +1,9 @@
 import { UserService } from "../services/user-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers"
-import { UserModel } from "../models/entities";
 import { AuthenticationService } from "@mintoven/common";
 import { ingress } from "../models/ingress";
-import { enrichRequest, validateAllowedFields } from "../validation/utils";
+import { enrichRequest, validateAllowedFields, validateRequiredFields } from "../validation/utils";
+import { WorkspaceService } from "../services/workspace-service";
 
 
 const retrieveUser = async (event: any) => {
@@ -13,8 +13,7 @@ const retrieveUser = async (event: any) => {
     // console.log("Sign-in response:", signInRes)
 
     const userService = new UserService();
-    const user: UserModel = await userService.getUserByToken(event.headers.Authorization);
-    return user;
+    return await userService.getUserByToken(event.headers.Authorization);
 }
 
 
@@ -27,19 +26,40 @@ const updateUser = async (event: any) => {
     console.log("Modification request:", userModificationReq)
 
     const userService = new UserService();
-    const updatedUser = await userService.update(userModificationReq.userId, userModificationReq);
-
-    return updatedUser
+    return userService.update(userModificationReq.userId, userModificationReq);
 }
 
 
 const createWorkspace = async (event: any) => {
-    return null;
+    const requestBody = JSON.parse(event.body);
+    const createWSReq = enrichRequest(event.headers.Authorization, requestBody) as ingress.WorkspaceCreateInput;
+
+    validateRequiredFields(requestBody, ["name", "userId"]);
+
+    const workspaceService: WorkspaceService = new WorkspaceService();
+    return workspaceService.create({ ...createWSReq, owner: requestBody.userId })
 }
 
 
 const updateWorkspace = async (event: any) => {
-    return null;
+    const requestBody = JSON.parse(event.body);
+    const updateWSReq = enrichRequest(event.headers.Authorization, requestBody) as ingress.WorkspaceCreateInput;
+
+    validateRequiredFields(requestBody, ["workspaceId", "userId"]);
+
+    const workspaceService: WorkspaceService = new WorkspaceService();
+    return workspaceService.update(requestBody.workspaceId, updateWSReq)
+}
+
+
+const getWorkspacesByToken = async (event: any) => {
+    const requestBody = JSON.parse(event.body);
+    const queryReq = enrichRequest(event.headers.Authorization, requestBody) as ingress.Request;
+
+    validateRequiredFields(queryReq, ["userId"]);
+
+    const workspaceService: WorkspaceService = new WorkspaceService();
+    return workspaceService.getWorkspacesByUserId(queryReq.userId)
 }
 
 
@@ -53,6 +73,8 @@ const handlerSelector = (key: string): HandlerFunctionType => {
             return createWorkspace;
         case "PUT:/workspace":
             return updateWorkspace;
+        case "GET:/workspace":
+            return getWorkspacesByToken;
     }
 }
 

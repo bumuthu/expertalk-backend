@@ -23,11 +23,9 @@ Resources:
   RESTApiDeployment:
     Type: 'AWS::ApiGateway::Deployment'
     DependsOn:
-      - UserRetrievalGET
-      - UserCreatePOST
-      - UserUpdatePUT
-      - SysConfigsGET
-      - SysConfigsPUT
+      - PublicUserCreate
+      - UserRetrievalByToken
+      # TODO add others
     Properties:
       RestApiId: !Ref RESTApi
       StageName: !Ref StageName
@@ -88,7 +86,6 @@ Resources:
       PathPart: "{name}"
 
   # Methods
-
   PublicUserCreate:
     Type: AWS::ApiGateway::Method
     DependsOn:
@@ -147,13 +144,33 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserWorkspaceHandlerArn}/invocations 
 
-  UserUpdatePUT:
+  WorkspaceCreate:
     Type: AWS::ApiGateway::Method
     DependsOn:
-      - UserResource
+      - WorkspaceResource
     Properties:
       RestApiId: !Ref RESTApi
-      ResourceId: !Ref UserResource
+      ResourceId: !Ref WorkspaceResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserWorkspaceHandlerArn}/invocations 
+
+  WorkspaceUpdate:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - WorkspaceResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref WorkspaceResource
       HttpMethod: PUT
       AuthorizationType: COGNITO_USER_POOLS
       AuthorizerId: !Ref RESTAuthorizer
@@ -165,7 +182,28 @@ Resources:
           - StatusCode: "200"
         Type: AWS_PROXY
         Uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserUpdateByTokenHandlerArn}/invocations 
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserWorkspaceHandlerArn}/invocations 
+
+  WorkspacesGetByUserId:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - WorkspaceResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref WorkspaceResource
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserWorkspaceHandlerArn}/invocations 
+
 
   # Methods: Pricing Plan
   SysConfigsGET:

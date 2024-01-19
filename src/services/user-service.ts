@@ -10,6 +10,9 @@ const MONTH_IN_MS = 30.5 * 24 * 3600 * 1000;
 const YEAR_IN_MS = 12 * 30.5 * 24 * 3600 * 1000;
 
 export class UserService extends EntityService<UserModel, UserDocument> {
+    constructor() {
+        super(UserDBModel);
+    }
 
     async getUserByToken(accessToken: string): Promise<UserModel> {
         await this.before();
@@ -38,7 +41,7 @@ export class UserService extends EntityService<UserModel, UserDocument> {
 
     getUserIdByToken(accessToken: string): string {
         if (!accessToken) throw new AuthenticationError("Null access token found");
-        
+
         const decodedUser: any = jwt_decode(accessToken);
         console.log("Decoded user:", decodedUser);
         const userId: string = decodedUser["custom:user_id"];

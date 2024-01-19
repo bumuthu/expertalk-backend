@@ -34,4 +34,13 @@ export namespace ingress {
     export interface SystemConfigUpdateInput extends Request {
         name: SysConfigName
     }
+
+    // Workspace related
+    export interface WorkspaceCreateInput extends Request {
+        name: string,
+    }
+    export interface WorkspaceUpdateInput extends Request {
+        workspaceId: string,
+        name: string,
+    }
 }
