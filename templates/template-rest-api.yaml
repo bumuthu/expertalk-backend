@@ -87,6 +87,23 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: query
 
+  # /v1/chat
+  ChatResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref VersionResource
+      RestApiId: !Ref RESTApi
+      PathPart: chat
+
+  # /v1/source
+  SourceResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref VersionResource
+      RestApiId: !Ref RESTApi
+      PathPart: source
+
+
   # Path Resources: System configs
   SysConfigResource:
     Type: AWS::ApiGateway::Resource
@@ -280,6 +297,45 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${KnowledgeHandlerArn}/invocations 
 
+  SourceAdd:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - SourceResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref SourceResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SourceHandlerArn}/invocations 
+
+  SourceRemove:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - SourceResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref SourceResource
+      HttpMethod: DELETE
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SourceHandlerArn}/invocations 
 
   # Methods: Pricing Plan
   SysConfigsGET:
@@ -344,11 +400,27 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
 
-  UserUpdateByTokenHandlerPermission:
+  KnowledgeHandlerPermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref UserUpdateByTokenHandlerArn
+      FunctionName: !Ref KnowledgeHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  ChatHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ChatHandlerArn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
+
+  SourceHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref SourceHandlerArn
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
 
@@ -382,6 +454,10 @@ Parameters:
   PublicHandlerArn:
     Type: String
   KnowledgeHandlerArn:
+    Type: String
+  ChatHandlerArn:
+    Type: String
+  SourceHandlerArn:
     Type: String
   SysConfigsRetrievalHandlerArn:
     Type: String

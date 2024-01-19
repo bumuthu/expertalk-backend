@@ -13,10 +13,10 @@ export class KnowledgeService extends EntityService<KnowledgeModel, KnowledgeDoc
             await this.before();
             if (knowledgeId != undefined) {
                 // TODO validate user has access to workspace if this is private
-                return this.dbModel.find({ _id: knowledgeId });
+                return this.dbModel.find({ _id: knowledgeId }).populate("sources");
             } else if (workspaceId != undefined) {
                 // TODO validate user has access to workspace
-                return this.dbModel.find({ workspace: workspaceId });
+                return this.dbModel.find({ workspace: workspaceId }).populate("sources");
             } else {
                 return [];
             }

@@ -3,7 +3,6 @@ import { respondError, respondSuccess } from "./response-generator";
 export type HandlerFunctionType = (event: any) => Promise<any>;
 
 export const multiHandler = async (event: any, handlerSelector: (key: string) => HandlerFunctionType) => {
-    // console.log("[multiHandler] Event", event)
     const selector = `${event.httpMethod}:${event.path}`;
     console.log("[multiHandler], Selector", selector);
     try {

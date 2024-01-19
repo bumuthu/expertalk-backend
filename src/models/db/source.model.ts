@@ -7,7 +7,6 @@ const sourceSchema = new Schema({
     name: String,
     uploadStatus: String,
     url: String,
-    key: String,
     createdAt: Number,
     updatedAt: Number,
 });

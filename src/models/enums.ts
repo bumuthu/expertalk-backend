@@ -1,4 +1,4 @@
-export enum UploadStatus {
+export enum SourceUploadStatus {
     PENDING,
     PROCESSING,
     FAILED,

@@ -53,16 +53,31 @@ export namespace ingress {
         public: boolean,
         workspace?: string,
         categories: string[]
-    } 
+    }
     export interface KnowledgeUpdateInput extends Request {
         knowledgeId: string,
         title?: string,
         description?: string,
         public?: boolean,
         categories?: string[]
-    } 
+    }
     export interface KnowledgeQueryInput extends Request {
         knowledgeId?: string, // returns this knowledge
         workspaceId?: string // returns all knowledges of ws
-    } 
+    }
+
+    // Source related
+    export interface SourceAddInput extends Request {
+        name: string,
+        url: string,
+        knowledgeId: string
+    }
+    export interface SourceRemoveInput extends Request {
+        sourceId: string,
+        knowledgeId: string
+    }
+
+    // Chat related
+    export interface ChatCompletionInput extends Request {
+    }
 }

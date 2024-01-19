@@ -1,4 +1,4 @@
-import { SysConfigName, UploadStatus } from "./enums";
+import { SysConfigName, SourceUploadStatus } from "./enums";
 
 
 export class Entity {
@@ -49,7 +49,7 @@ export interface KnowledgeModel extends Entity {
     public: boolean,
     imageUrl?: string,
     workspace?: string | WorkspaceModel,
-    sources: string[],
+    sources: (string | SourceModel)[],
     categories?: (string | CategoryModel)[]
     publicChats: (string | ChatModel)[]
 }
@@ -67,9 +67,8 @@ export interface ChatModel extends Entity {
 // Source related
 export interface SourceModel extends Entity {
     name: string
-    uploadStatus: UploadStatus
+    uploadStatus: SourceUploadStatus
     url: string
-    key: string
     createdAt: number
     updatedAt: number
 }

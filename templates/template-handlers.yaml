@@ -112,19 +112,24 @@ Resources:
             Path: /knowledge/query
             Method: POST
 
-  # PUT v1/user
-  UserUpdateByTokenHandler:
+  SourceHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: lib/handlers/user-workspace-handlers.handler
-      FunctionName: !Sub 'talk-${EnvironmentName}-UserUpdateByTokenHandler'
+      Handler: lib/handlers/source-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-SourceHandler'
       Events:
-        HttpEvent:
+        AddSource:
           Type: Api
           Properties:
             RestApiId: !Ref RESTApi
-            Path: /user
-            Method: PUT
+            Path: /source
+            Method: POST
+        RemoveSource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /source
+            Method: DELETE
 
 
 # System Config handlers

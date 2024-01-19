@@ -1,5 +1,6 @@
 import { ingress } from "../models/ingress";
 import { KnowledgeService } from "../services/knowledge-service";
+import { SourceService } from "../services/source-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 import { enrichRequest, validateRequiredFields } from "../validation/utils";
 
@@ -32,6 +33,8 @@ const queryKnowledges = async (event: any) => {
 
     validateRequiredFields(requestBody, ["userId"]);
 
+    // TODO this si just to init the source schema. Need a proper solution
+    const sourceService: SourceService = new SourceService();
     const workspaceService: KnowledgeService = new KnowledgeService();
     return workspaceService.queryKnowlege(queryKnowlegdes.knowledgeId, queryKnowlegdes.workspaceId)
 }
