@@ -30,22 +30,24 @@ fi
 alias="local"
 region="local-region"
 api_gateway_name="talk-${alias}-api"
+source_bucket_name="talk-staging-sources-us-east-2"
 
 rm -r dist
 mkdir dist
 
 mkdir dist/.template
 
-npm install
+# npm install
 npm run build
 
 cp -r ./lib ./dist
 cp package.json ./dist
 cp package-lock.json ./dist
 cp templates/template-handlers.yaml ./dist
+cp -r node_modules ./dist
 
 cd ./dist
-npm install --only=prod
+# npm install --only=prod
 
 sam build --region $region \
     --template-file ./template-handlers.yaml \
@@ -57,4 +59,6 @@ cp -r ./.aws-sam ../
 sam local start-api --parameter-overrides EnvironmentName=$alias \
     StageName=$alias ApiGatewayName=$api_gateway_name MongoPath=$MONGO_PATH \
     CognitoUserPoolId=$COGNITO_POOL_ID CognitoUserPoolClient=$COGNITO_POOL_CLIENT \
-    StripeSecretKey=$STRIPE_SECRET_KEY
+    StripeSecretKey=$STRIPE_SECRET_KEY SourceBucketName=$source_bucket_name \
+    SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY
+

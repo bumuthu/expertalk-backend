@@ -76,6 +76,9 @@ export namespace ingress {
         sourceId: string,
         knowledgeId: string
     }
+    export interface SourceUploadUrlInput extends Request {
+        knowledgeId: string,
+    }
 
     // Chat related
     export interface ChatCompletionInput extends Request {

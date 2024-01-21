@@ -103,6 +103,21 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: source
 
+  # /v1/source/upload-url
+  SourceUploadUrlResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref SourceResource
+      RestApiId: !Ref RESTApi
+      PathPart: upload-url
+
+  # /v1/source/upload-url/{knowledgeId}
+  SourceUploadUrlKnowledgeIdResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref SourceResource
+      RestApiId: !Ref RESTApi
+      PathPart: "{knowledgeId}"
 
   # Path Resources: System configs
   SysConfigResource:
@@ -325,6 +340,26 @@ Resources:
       RestApiId: !Ref RESTApi
       ResourceId: !Ref SourceResource
       HttpMethod: DELETE
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SourceHandlerArn}/invocations 
+
+  SourceUploadUrl:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - SourceUploadUrlKnowledgeIdResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref SourceUploadUrlKnowledgeIdResource
+      HttpMethod: GET
       AuthorizationType: COGNITO_USER_POOLS
       AuthorizerId: !Ref RESTAuthorizer
       MethodResponses:

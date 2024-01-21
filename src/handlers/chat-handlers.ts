@@ -15,6 +15,7 @@ const chatCompletion = async (event: any) => {
     return null;
 }
 
+
 const handlerSelector = (key: string): HandlerFunctionType => {
     switch (key) {
         case "POST:/chat":

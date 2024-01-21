@@ -16,6 +16,9 @@ Globals:
         TALK_COGNITO_USER_POOL_ID: !Sub ${CognitoUserPoolId}
         TALK_COGNITO_USER_POOL_CLIENT: !Sub ${CognitoUserPoolClient}
         TALK_STRIPE_SECRET_KEY: !Sub ${StripeSecretKey}
+        TALK_SOURCE_BUCKET_NAME: !Sub ${SourceBucketName}
+        TALK_SOURCE_UPLOAD_ACCESS_KEY: !Sub ${SourceUploadAccessKey}
+        TALK_SOURCE_UPLOAD_SECRET_KEY: !Sub ${SourceUploadSecretKey}
 
 Resources:
   # API resource
@@ -130,6 +133,13 @@ Resources:
             RestApiId: !Ref RESTApi
             Path: /source
             Method: DELETE
+        GetUploadUrl:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /source/upload-url/{knowledgeId}
+            Method: GET
+        
 
 
 # System Config handlers
@@ -209,4 +219,10 @@ Parameters:
   CognitoUserPoolClient:
     Type: String
   StripeSecretKey:
+    Type: String
+  SourceBucketName:
+    Type: String
+  SourceUploadAccessKey:
+    Type: String
+  SourceUploadSecretKey:
     Type: String

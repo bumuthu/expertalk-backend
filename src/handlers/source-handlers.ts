@@ -1,4 +1,5 @@
 import { ingress } from "../models/ingress";
+import { S3SourceService } from "../services/aws-services/s3-source-service";
 import { KnowledgeService } from "../services/knowledge-service";
 import { SourceService } from "../services/source-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers";
@@ -9,7 +10,7 @@ const addSource = async (event: any) => {
     const requestBody = JSON.parse(event.body);
     const sourceAdd = enrichRequest(event.headers.Authorization, requestBody) as ingress.SourceAddInput;
 
-    validateRequiredFields(requestBody, ["name", "url", "knowledgeId"]);
+    validateRequiredFields(requestBody, ["name", "knowledgeId", "url"]);
 
     const sourceService: SourceService = new SourceService();
     const source = await sourceService.create(sourceAdd);
@@ -20,6 +21,11 @@ const addSource = async (event: any) => {
 
     // Start indexing here
     console.log("Indexing started for file:", source._id);
+
+    const s3Service = new S3SourceService();
+
+    const pdfFile = await s3Service.getObject(sourceAdd.url.split("amazonaws.com/")[1]);
+    console.log("PDF type", typeof pdfFile);
 
     return source;
 }
@@ -48,12 +54,23 @@ const removeSource = async (event: any) => {
     return deletedSourceRes;
 }
 
+const getSourceUploadUrl = async (event: any) => {
+    const sourceUploadUrl = enrichRequest(event.headers.Authorization, event.pathParameters) as ingress.SourceUploadUrlInput;
+
+    validateRequiredFields(sourceUploadUrl, ["knowledgeId"]);
+
+    const sourceService: SourceService = new SourceService();
+    return await sourceService.getUploadUrl(sourceUploadUrl.knowledgeId);
+}
+
 const handlerSelector = (key: string): HandlerFunctionType => {
     switch (key) {
         case "POST:/source":
             return addSource;
         case "DELETE:/source":
             return removeSource;
+        case "GET:/source/upload-url/{knowledgeId}":
+            return getSourceUploadUrl;
     }
 }
 

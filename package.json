@@ -10,6 +10,7 @@
   "dependencies": {
     "@mintoven/common": "^1.0.14",
     "amazon-cognito-identity-js": "^5.0.2",
+    "aws-sdk": "^2.1540.0",
     "jwt-decode": "^3.1.2",
     "mongoose": "^8.0.4",
     "nodemailer": "^6.9.8",
