@@ -2,7 +2,7 @@ import { SysConfigName } from "../models/enums";
 import SysConfigDBModel from "../models/db/sys-config.model";
 import { InternalServerError, KnownError, ValidationError } from "../utils/exceptions";
 import connectToTheDatabase from "../utils/mongo-connection";
-import { EntityService } from "./entity.service";
+import { EntityService } from "./entity-services/entity.service";
 import { SystemConfigModel, UserModel } from "src/models/entities";
 
 export class SysConfigsService {

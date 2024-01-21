@@ -4,7 +4,7 @@ import { respondError, respondSuccess } from '../../utils/response-generator';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ingress } from '../../models/ingress';
 import { validateRequiredFields } from '../../validation/utils';
-import { UserService } from '../../services/user-service';
+import { UserService } from '../../services/entity-services/user-service';
 import { AuthenticationError } from '../../utils/exceptions';
 import { UserModel } from 'src/models/entities';
 

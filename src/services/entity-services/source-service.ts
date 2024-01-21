@@ -1,6 +1,6 @@
-import SourceDBModel, { SourceDocument } from "../models/db/source.model";
-import { SourceModel } from "../models/entities";
-import { S3SourceService } from "./aws-services/s3-source-service";
+import SourceDBModel, { SourceDocument } from "../../models/db/source.model";
+import { SourceModel } from "../../models/entities";
+import { S3SourceService } from "../aws-services/s3-source-service";
 import { EntityService } from "./entity.service";
 import { randomUUID } from 'crypto';
 

@@ -1,5 +1,5 @@
-import ChatDBModel, { ChatDocument } from "../models/db/chat.model";
-import { ChatModel } from "../models/entities";
+import ChatDBModel, { ChatDocument } from "../../models/db/chat.model";
+import { ChatModel } from "../../models/entities";
 import { EntityService } from "./entity.service";
 
 

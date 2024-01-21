@@ -1,5 +1,5 @@
 import { ingress } from "../models/ingress";
-import { UserService } from "../services/user-service";
+import { UserService } from "../services/entity-services/user-service";
 import { ValidationError } from "../utils/exceptions";
 
 export function ValidateFields(data, model) {

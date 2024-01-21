@@ -1,7 +1,7 @@
 import { PricingPlanName } from "@mintoven/common";
 import { ingress } from "../../models/ingress";
 import { SysConfigsService } from "../../services/sys-config-service";
-import { UserService } from "../../services/user-service";
+import { UserService } from "../../services/entity-services/user-service";
 import { ValidationError } from "../../utils/exceptions";
 import { respondError, respondSuccess } from "../../utils/response-generator";
 import { validateAllowedFields, validateRequiredFields } from "../../validation/utils";

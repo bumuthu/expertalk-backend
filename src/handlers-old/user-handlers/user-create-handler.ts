@@ -3,7 +3,7 @@ import 'source-map-support/register';
 import { respondError, respondSuccess } from '../../utils/response-generator';
 import { ingress } from '../../models/ingress';
 import { validateRequiredFields } from '../../validation/utils';
-import { UserService } from '../../services/user-service';
+import { UserService } from '../../services/entity-services/user-service';
 import { AuthenticationError } from '../../utils/exceptions';
 import { AuthenticationService } from '@mintoven/common';
 import { UserModel } from 'src/models/entities';

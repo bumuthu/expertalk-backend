@@ -1,7 +1,7 @@
 import { ingress } from "../models/ingress";
 import { S3SourceService } from "../services/aws-services/s3-source-service";
-import { KnowledgeService } from "../services/knowledge-service";
-import { SourceService } from "../services/source-service";
+import { KnowledgeService } from "../services/entity-services/knowledge-service";
+import { SourceService } from "../services/entity-services/source-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers";
 import { enrichRequest, validateRequiredFields } from "../validation/utils";
 

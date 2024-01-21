@@ -1,6 +1,6 @@
-import WorkspaceDBModel, { WorkspaceDocument } from "../models/db/workspace.model";
-import { WorkspaceModel } from "../models/entities";
-import { InternalServerError, KnownError } from "../utils/exceptions";
+import WorkspaceDBModel, { WorkspaceDocument } from "../../models/db/workspace.model";
+import { WorkspaceModel } from "../../models/entities";
+import { InternalServerError, KnownError } from "../../utils/exceptions";
 import { EntityService } from "./entity.service";
 
 export class WorkspaceService extends EntityService<WorkspaceModel, WorkspaceDocument> {

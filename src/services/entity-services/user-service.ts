@@ -1,10 +1,10 @@
 import jwt_decode from "jwt-decode";
-import UserDBModel, { UserDocument } from "../models/db/user.model";
-import { ingress } from "../models/ingress";
-import { AuthenticationError, DataNotFoundError, InternalServerError, KnownError, ValidationError } from "../utils/exceptions";
+import UserDBModel, { UserDocument } from "../../models/db/user.model";
+import { ingress } from "../../models/ingress";
+import { AuthenticationError, DataNotFoundError, InternalServerError, KnownError, ValidationError } from "../../utils/exceptions";
 import { EntityService } from "./entity.service";
-import { EmailSubject, MonitoringService } from "./monitoring-service";
-import { UserModel } from "../models/entities";
+import { EmailSubject, MonitoringService } from "../monitoring-service";
+import { UserModel } from "../../models/entities";
 
 const MONTH_IN_MS = 30.5 * 24 * 3600 * 1000;
 const YEAR_IN_MS = 12 * 30.5 * 24 * 3600 * 1000;

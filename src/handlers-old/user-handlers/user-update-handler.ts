@@ -2,7 +2,7 @@ import 'source-map-support/register';
 import { respondError, respondSuccess } from '../../utils/response-generator';
 import { ingress } from '../../models/ingress';
 import { enrichRequest, validateAllowedFields } from '../../validation/utils';
-import { UserService } from '../../services/user-service';
+import { UserService } from '../../services/entity-services/user-service';
 
 
 // UserUpdateByTokenHandler

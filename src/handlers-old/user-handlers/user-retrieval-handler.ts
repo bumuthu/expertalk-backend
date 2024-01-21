@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 import { respondError, respondSuccess } from '../../utils/response-generator';
-import { UserService } from '../../services/user-service';
+import { UserService } from '../../services/entity-services/user-service';
 import { UserModel } from 'src/models/entities';
 
 

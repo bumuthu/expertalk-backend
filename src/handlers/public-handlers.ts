@@ -1,6 +1,6 @@
 import { AuthenticationService } from "@mintoven/common";
 import { ingress } from "../models/ingress";
-import { UserService } from "../services/user-service";
+import { UserService } from "../services/entity-services/user-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 import { validateRequiredFields } from "../validation/utils";
 import { UserModel } from "../models/entities";

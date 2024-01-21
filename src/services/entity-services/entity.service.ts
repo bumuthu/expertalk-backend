@@ -1,7 +1,7 @@
 import { Entity } from "src/models/entities";
-import connectToTheDatabase from "../utils/mongo-connection";
+import connectToTheDatabase from "../../utils/mongo-connection";
 import { Document, Model } from "mongoose";
-import { InternalServerError, KnownError } from "../utils/exceptions";
+import { InternalServerError, KnownError } from "../../utils/exceptions";
 
 export class EntityService<E extends Entity, D extends Document> {
     protected dbModel: Model<D>;

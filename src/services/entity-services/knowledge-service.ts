@@ -1,6 +1,6 @@
-import KnowledgeDBModel, { KnowledgeDocument } from "../models/db/knowledge.model"
-import { KnowledgeModel } from "../models/entities"
-import { InternalServerError, KnownError } from "../utils/exceptions";
+import KnowledgeDBModel, { KnowledgeDocument } from "../../models/db/knowledge.model"
+import { KnowledgeModel } from "../../models/entities"
+import { InternalServerError, KnownError } from "../../utils/exceptions";
 import { EntityService } from "./entity.service"
 
 export class KnowledgeService extends EntityService<KnowledgeModel, KnowledgeDocument> {

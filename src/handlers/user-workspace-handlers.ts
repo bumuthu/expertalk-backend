@@ -1,9 +1,9 @@
-import { UserService } from "../services/user-service";
+import { UserService } from "../services/entity-services/user-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 import { AuthenticationService } from "@mintoven/common";
 import { ingress } from "../models/ingress";
 import { enrichRequest, validateAllowedFields, validateRequiredFields } from "../validation/utils";
-import { WorkspaceService } from "../services/workspace-service";
+import { WorkspaceService } from "../services/entity-services/workspace-service";
 
 
 const retrieveUser = async (event: any) => {
