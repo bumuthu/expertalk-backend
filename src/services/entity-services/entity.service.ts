@@ -14,10 +14,13 @@ export class EntityService<E extends Entity, D extends Document> {
         await connectToTheDatabase();
     }
 
-    async get(key: string): Promise<E> {
+    async get(key: string, populate?: any): Promise<E> {
         try {
             await this.before();
-            return this.dbModel.findById(key);
+            if (populate ) { 
+                return this.dbModel.findById(key).populate(populate) as any;
+            }
+            return this.dbModel.findById(key) as any;
         } catch (e) {
             console.error(e);
             if (e.knownError) throw new KnownError(e.status, e.code, e.message);

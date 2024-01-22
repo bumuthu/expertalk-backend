@@ -37,7 +37,7 @@ mkdir dist
 
 mkdir dist/.template
 
-# npm install
+npm install
 npm run build
 
 cp -r ./lib ./dist
@@ -47,7 +47,7 @@ cp templates/template-handlers.yaml ./dist
 cp -r node_modules ./dist
 
 cd ./dist
-# npm install --only=prod
+npm install --only=prod
 
 sam build --region $region \
     --template-file ./template-handlers.yaml \
@@ -60,5 +60,6 @@ sam local start-api --parameter-overrides EnvironmentName=$alias \
     StageName=$alias ApiGatewayName=$api_gateway_name MongoPath=$MONGO_PATH \
     CognitoUserPoolId=$COGNITO_POOL_ID CognitoUserPoolClient=$COGNITO_POOL_CLIENT \
     StripeSecretKey=$STRIPE_SECRET_KEY SourceBucketName=$source_bucket_name \
-    SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY
+    SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY \
+    PineconeApiKey=$PINECONE_API_KEY PineconeIndex=$PINECONE_INDEX PineconeEnvironment=$PINECONE_ENVIRONMENT
 

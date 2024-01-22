@@ -69,5 +69,6 @@ sam deploy --region $region \
     StageName=$alias ApiGatewayName=$api_gateway_name MongoPath=$MONGO_PATH \
     CognitoUserPoolId=$COGNITO_POOL_ID CognitoUserPoolClient=$COGNITO_POOL_CLIENT \
     StripeSecretKey=$STRIPE_SECRET_KEY SourceBucketName=$source_bucket_name \
-    SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY
+    SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY \
+    PineconeApiKey=$PINECONE_API_KEY PineconeIndex=$PINECONE_INDEX PineconeEnvironment=$PINECONE_ENVIRONMENT
  

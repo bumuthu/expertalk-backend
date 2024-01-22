@@ -1,4 +1,6 @@
+import { WorkspaceModel } from "../models/entities";
 import { ingress } from "../models/ingress";
+import { CoreService } from "../services/ai-services/core-service";
 import { S3SourceService } from "../services/aws-services/s3-source-service";
 import { KnowledgeService } from "../services/entity-services/knowledge-service";
 import { SourceService } from "../services/entity-services/source-service";
@@ -22,11 +24,15 @@ const addSource = async (event: any) => {
     // Start indexing here
     console.log("Indexing started for file:", source._id);
 
-    const s3Service = new S3SourceService();
-
-    const pdfFile = await s3Service.getObject(sourceAdd.url.split("amazonaws.com/")[1]);
-    console.log("PDF type", typeof pdfFile);
-
+    let workspaceTokens = null;
+    if (knowledge.workspace) {
+        workspaceTokens = (knowledge.workspace as WorkspaceModel).tokens;
+    }
+    
+    const coreService = new CoreService(workspaceTokens);
+    const s3Key = sourceAdd.url.split("amazonaws.com/")[1];
+    await coreService.indexDocument(sourceAdd.knowledgeId, s3Key);
+    
     return source;
 }
 

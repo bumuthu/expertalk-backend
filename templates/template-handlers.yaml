@@ -19,6 +19,9 @@ Globals:
         TALK_SOURCE_BUCKET_NAME: !Sub ${SourceBucketName}
         TALK_SOURCE_UPLOAD_ACCESS_KEY: !Sub ${SourceUploadAccessKey}
         TALK_SOURCE_UPLOAD_SECRET_KEY: !Sub ${SourceUploadSecretKey}
+        PINECONE_API_KEY: !Sub ${PineconeApiKey}
+        PINECONE_INDEX: !Sub ${PineconeIndex}
+        PINECONE_ENVIRONMENT: !Sub ${PineconeEnvironment}
 
 Resources:
   # API resource
@@ -225,4 +228,10 @@ Parameters:
   SourceUploadAccessKey:
     Type: String
   SourceUploadSecretKey:
+    Type: String
+  PineconeApiKey:
+    Type: String
+  PineconeIndex:
+    Type: String
+  PineconeEnvironment:
     Type: String
