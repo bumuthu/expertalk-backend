@@ -30,6 +30,6 @@ export class CoreService {
         console.log("SIMILARITY SEARCH DATA", context);
 
         const prevMessages = [];
-        const chatStreamRes = await this.langchainService.queryWithContext(context, prevMessages, message);
+        return await this.langchainService.queryWithContext(context, prevMessages, message);
     }
 }

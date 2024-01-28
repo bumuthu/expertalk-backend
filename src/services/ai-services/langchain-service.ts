@@ -65,12 +65,13 @@ export class LangchainService {
                 }
             ]
         })
+        console.log("Response", response)
         const stream = OpenAIStream(response, {
             async onCompletion(completion) {
                 console.log("onCompletion", completion)
             },
         })
-
+        console.log("Stream", stream)
         return new StreamingTextResponse(stream)
     }
 }
