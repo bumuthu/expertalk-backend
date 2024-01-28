@@ -82,5 +82,7 @@ export namespace ingress {
 
     // Chat related
     export interface ChatCompletionInput extends Request {
+        knowledgeId: string,
+        message: string
     }
 }

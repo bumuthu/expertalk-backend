@@ -143,7 +143,18 @@ Resources:
             Path: /source/upload-url/{knowledgeId}
             Method: GET
         
-
+  ChatHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/chat-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-ChatHandler'
+      Events:
+        ChatCompletion:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /chat
+            Method: POST
 
 # System Config handlers
 

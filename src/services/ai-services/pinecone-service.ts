@@ -1,5 +1,5 @@
+import { PineconeStore } from "@langchain/pinecone";
 import { Pinecone } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone"
 
 export class PineconeService {
     private pinecone: Pinecone;
@@ -21,5 +21,15 @@ export class PineconeService {
                 namespace: namespace,
             }
         )
+    }
+
+    async similaritySearch(namespace: string, embeddings: any, message: string) {
+        const vectorStore = await PineconeStore.fromExistingIndex(embeddings,
+            {
+                pineconeIndex: this.index,
+                namespace: namespace,
+            }
+        )
+        return await vectorStore.similaritySearch(message, 4);
     }
 }

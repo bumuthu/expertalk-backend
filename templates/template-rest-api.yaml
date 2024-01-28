@@ -372,6 +372,26 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SourceHandlerArn}/invocations 
 
+  ChatCompletion:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - ChatResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref ChatResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ChatHandlerArn}/invocations 
+
   # Methods: Pricing Plan
   SysConfigsGET:
     Type: AWS::ApiGateway::Method

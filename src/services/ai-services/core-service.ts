@@ -11,12 +11,25 @@ export class CoreService {
         this.pineconeService = new PineconeService();
     }
 
-    async indexDocument(knowledgeId: string, s3Key: string) {
-        const pdfLoaded = this.langchainService.loadPdfFromS3(s3Key);
+    async indexDocument(knowledgeId: string, url: string) {
         const embeddings = this.langchainService.getEmbedding();
-
         await this.pineconeService.initIndex();
+
+        const pdfBlob = await (await fetch(url)).blob();
+        const pdfLoaded = await this.langchainService.loadFromBlob(pdfBlob);
+        
         const res = await this.pineconeService.indexDocument(knowledgeId, embeddings, pdfLoaded);
         console.log("INDEXING DATA", res);
+    }
+
+    async chatCompletion(knowledgeId: string, message: string) {
+        const embeddings = this.langchainService.getEmbedding();
+        await this.pineconeService.initIndex();
+
+        const context = await this.pineconeService.similaritySearch(knowledgeId, embeddings, message);
+        console.log("SIMILARITY SEARCH DATA", context);
+
+        const prevMessages = [];
+        const chatStreamRes = await this.langchainService.queryWithContext(context, prevMessages, message);
     }
 }

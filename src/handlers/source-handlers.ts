@@ -1,7 +1,6 @@
 import { WorkspaceModel } from "../models/entities";
 import { ingress } from "../models/ingress";
 import { CoreService } from "../services/ai-services/core-service";
-import { S3SourceService } from "../services/aws-services/s3-source-service";
 import { KnowledgeService } from "../services/entity-services/knowledge-service";
 import { SourceService } from "../services/entity-services/source-service";
 import { HandlerFunctionType, multiHandler } from "../utils/handlers";
@@ -30,8 +29,7 @@ const addSource = async (event: any) => {
     }
     
     const coreService = new CoreService(workspaceTokens);
-    const s3Key = sourceAdd.url.split("amazonaws.com/")[1];
-    await coreService.indexDocument(sourceAdd.knowledgeId, s3Key);
+    await coreService.indexDocument(sourceAdd.knowledgeId, sourceAdd.url);
     
     return source;
 }

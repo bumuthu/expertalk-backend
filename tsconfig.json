@@ -5,6 +5,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "allowJs": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "target": "es6",
     "module": "commonjs",
