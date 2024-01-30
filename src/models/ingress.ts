@@ -5,6 +5,7 @@ export namespace ingress {
     export interface Request {
         requestId?: string
         userId?: string,
+        connectionId?: string
     }
 
     // Auth related

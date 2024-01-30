@@ -23,7 +23,7 @@ const chatCompletion = async (event: any) => {
     }
     
     const coreService = new CoreService(workspaceTokens);
-    return await coreService.chatCompletion(chatCompletion.knowledgeId, chatCompletion.message);
+    return await coreService.chatCompletion(chatCompletion.knowledgeId, chatCompletion.message, chatCompletion.connectionId);
 }
 
 

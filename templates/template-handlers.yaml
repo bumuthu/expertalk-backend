@@ -43,6 +43,15 @@ Resources:
 
 
   # Handlers
+  WebsocketHandler:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lib/handlers/websocket-handlers.handler
+      FunctionName: !Sub 'talk-${EnvironmentName}-WebsocketHandler'
+      Policies:
+        - AmazonAPIGatewayInvokeFullAccess
+        - AmazonAPIGatewayAdministrator
+        
   PublicHandler:
     Type: 'AWS::Serverless::Function'
     Properties:

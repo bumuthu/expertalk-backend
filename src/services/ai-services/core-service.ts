@@ -22,7 +22,7 @@ export class CoreService {
         console.log("INDEXING DATA", res);
     }
 
-    async chatCompletion(knowledgeId: string, message: string) {
+    async chatCompletion(knowledgeId: string, message: string, connectionId?: string) {
         const embeddings = this.langchainService.getEmbedding();
         await this.pineconeService.initIndex();
 
@@ -30,6 +30,6 @@ export class CoreService {
         console.log("SIMILARITY SEARCH DATA", context);
 
         const prevMessages = [];
-        return await this.langchainService.queryWithContext(context, prevMessages, message);
+        return await this.langchainService.queryWithContext(context, prevMessages, message, connectionId);
     }
 }

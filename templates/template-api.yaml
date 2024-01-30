@@ -18,6 +18,16 @@ Resources:
         SysConfigsRetrievalHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsRetrievalHandler
         SysConfigsUpdateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsUpdateHandler
 
+  WebsocketApiTemplate:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./template-ws-api.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        StageName: !Ref StageName
+        ApiGatewayName: !Ref ApiGatewayName
+        WebsocketHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-WebsocketHandler
+
 Parameters:
   EnvironmentName:
     Type: String
