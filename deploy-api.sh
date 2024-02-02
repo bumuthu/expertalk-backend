@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 alias=$1
 region=$2
 

@@ -1,16 +1,11 @@
 #!/bin/bash
 
-set -e
-
 alias=$1
 region=$2
 
 # Validations
-if [[ -z ${MONGO_PASSWORD} ]]; then
-    echo "MONGO_PASSWORD not found."
-    exit 1
-elif [[ -z ${MONGO_USERNAME} ]]; then
-    echo "MONGO_USERNAME not found."
+if [[ -z ${MONGO_PATH} ]]; then
+    echo "MONGO_PATH not found."
     exit 1
 elif [[ -z ${STRIPE_SECRET_KEY} ]]; then
     echo "STRIPE_SECRET_KEY not found."
@@ -54,7 +49,7 @@ rm -r ../.aws-sam
 mkdir ../.aws-sam
 cp -r ./.aws-sam ../
 
-exit 0 # Uncomment this for local developments
+# exit 0 # Uncomment this for local developments
 
 sam package --region $region \
     --template-file ./template-handlers.yaml \
