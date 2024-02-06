@@ -63,6 +63,14 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: user
 
+  # /v1/public/user/login
+  PublicUserLoginResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PublicUserResource
+      RestApiId: !Ref RESTApi
+      PathPart: login
+
   # /v1/workspace
   WorkspaceResource:
     Type: AWS::ApiGateway::Resource
@@ -128,6 +136,25 @@ Resources:
     Properties:
       RestApiId: !Ref RESTApi
       ResourceId: !Ref PublicUserResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PublicHandlerArn}/invocations 
+
+  PublicUserLogin:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - PublicUserLoginResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref PublicUserLoginResource
       HttpMethod: POST
       AuthorizationType: NONE
       MethodResponses:

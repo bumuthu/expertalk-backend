@@ -18,6 +18,10 @@ export namespace ingress {
         email: string,
         password: string
     }
+    export interface LogInInput extends Request {
+        email: string,
+        password: string
+    }
 
 
     // User related

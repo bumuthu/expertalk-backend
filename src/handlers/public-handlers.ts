@@ -47,6 +47,11 @@ const createUser = async (event: any) => {
     }
 }
 
+const loginUser = async (event: any) => {
+    const loginInput: ingress.LogInInput = JSON.parse(event.body) as ingress.LogInInput;
+    const authService = new AuthenticationService(POOL_ID, CLIENT_ID);
+    return await authService.signIn(loginInput.email, loginInput.password);
+}
 
 const retrieveKnowledges = async (event: any) => {
     return null;
@@ -73,6 +78,9 @@ const handlerSelector = (key: string): HandlerFunctionType => {
             return retrieveKnowledgeChats;
         case "GET:/public/categories":
             return retrieveCategories;
+        // Temporary for getting tokens
+        case "POST:/public/user/login":
+            return loginUser;
     }
 }
 

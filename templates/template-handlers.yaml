@@ -64,6 +64,16 @@ Resources:
             RestApiId: !Ref RESTApi
             Path: /public/user
             Method: POST
+            Auth: 
+              Authorizer: NONE
+        PublicUserLoginEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /public/user/login
+            Method: POST
+            Auth: 
+              Authorizer: NONE
 
   UserWorkspaceHandler:
     Type: 'AWS::Serverless::Function'
