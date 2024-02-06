@@ -1,4 +1,5 @@
 import SourceDBModel, { SourceDocument } from "../../models/db/source.model";
+import { egress } from "../../models/egress";
 import { SourceModel } from "../../models/entities";
 import { S3SourceService } from "../aws-services/s3-source-service";
 import { EntityService } from "./entity.service";
@@ -10,7 +11,7 @@ export class SourceService extends EntityService<SourceModel, SourceDocument> {
         super(SourceDBModel);
     }
 
-    async getUploadUrl(knowledgeId: string) {
+    async getUploadUrl(knowledgeId: string): Promise<egress.GetSourceUploadUrlResponse> {
         const generatedSourceId = randomUUID().toString();
         const sourcePath = `${knowledgeId}/${generatedSourceId}.pdf`;
 

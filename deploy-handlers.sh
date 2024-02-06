@@ -42,15 +42,6 @@ npm install --only=prod
 
 # du -sh ./node_modules
 
-sam build --region $region \
-    --template-file ./template-handlers.yaml
-
-rm -r ../.aws-sam
-mkdir ../.aws-sam
-cp -r ./.aws-sam ../
-
-# exit 0 # Uncomment this for local developments
-
 sam package --region $region \
     --template-file ./template-handlers.yaml \
     --s3-bucket $deployment_bucket \

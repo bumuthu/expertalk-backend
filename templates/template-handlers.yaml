@@ -165,35 +165,6 @@ Resources:
             Path: /chat
             Method: POST
 
-# System Config handlers
-
-  # GET v1/sys-configs/{name}
-  SysConfigsRetrievalHandler:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      Handler: lib/handlers/sys-configs-handlers/sys-configs-retrieval-handlers.handler
-      FunctionName: !Sub 'talk-${EnvironmentName}-SysConfigsRetrievalHandler'
-      Events:
-        HttpEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /sys-configs/{name}
-            Method: GET
-
-  # PUT v1/sys-configs/{name}
-  SysConfigsUpdateHandler:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      Handler: lib/handlers/sys-configs-handlers/sys-configs-update-handler.handler
-      FunctionName: !Sub 'talk-${EnvironmentName}-SysConfigsUpdateHandler'
-      Events:
-        HttpEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /sys-configs
-            Method: PUT
 
   # Schedulled function to validate user billings
   # UserBillingValidationHandler:

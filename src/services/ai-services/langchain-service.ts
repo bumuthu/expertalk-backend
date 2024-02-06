@@ -4,6 +4,7 @@ import { buildQuery } from "./query";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import OpenAI from "openai";
 import { ApiGatewayService } from "../aws-services/api-gateway-service";
+import { egress } from "../../models/egress";
 // import { S3Loader } from "langchain/document_loaders/web/s3";
 
 // const SOURCE_BUCKET_NAME = "talk-staging-sources-us-east-2"; // process.env.TALK_SOURCE_BUCKET_NAME;
@@ -55,7 +56,7 @@ export class LangchainService {
         return await loader.load();
     }
 
-    async queryWithContext(context: any[], prevMessages: ChatModel[], message: string, connectionId?: string) {
+    async queryWithContext(context: any[], prevMessages: ChatModel[], message: string, connectionId?: string): Promise<egress.ChatComletionResponse> {
         const query = buildQuery(context, prevMessages, message);
         const streamingRes = await this.openAI.chat.completions.create({
             model: 'gpt-3.5-turbo',

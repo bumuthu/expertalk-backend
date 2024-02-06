@@ -16,8 +16,6 @@ Resources:
         SourceHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SourceHandler
         ChatHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-ChatHandler
         PublicHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-PublicHandler
-        SysConfigsRetrievalHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsRetrievalHandler
-        SysConfigsUpdateHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-SysConfigsUpdateHandler
 
   WebsocketApiTemplate:
     Type: AWS::Serverless::Application

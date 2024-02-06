@@ -119,19 +119,6 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: "{knowledgeId}"
 
-  # Path Resources: System configs
-  SysConfigResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      ParentId: !Ref VersionResource
-      RestApiId: !Ref RESTApi
-      PathPart: sys-configs
-  SysConfigNameResource:
-    Type: AWS::ApiGateway::Resource
-    Properties:
-      ParentId: !Ref SysConfigResource
-      RestApiId: !Ref RESTApi
-      PathPart: "{name}"
 
   # Methods
   PublicUserCreate:
@@ -392,51 +379,6 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ChatHandlerArn}/invocations 
 
-  # Methods: Pricing Plan
-  SysConfigsGET:
-    Type: AWS::ApiGateway::Method
-    DependsOn:
-      - SysConfigNameResource
-    Properties:
-      RestApiId: !Ref RESTApi
-      ResourceId: !Ref SysConfigNameResource
-      HttpMethod: GET
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref RESTAuthorizer
-      MethodResponses:
-        - StatusCode: "200"
-      RequestParameters:
-        method.request.path.name: 
-          Required: true
-      Integration:
-        IntegrationHttpMethod: POST
-        IntegrationResponses:
-          - StatusCode: "200"
-        RequestParameters:
-          integration.request.path.name: 'method.request.path.name'
-        Type: AWS_PROXY
-        Uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SysConfigsRetrievalHandlerArn}/invocations 
-
-  SysConfigsPUT:
-    Type: AWS::ApiGateway::Method
-    DependsOn:
-      - SysConfigResource
-    Properties:
-      RestApiId: !Ref RESTApi
-      ResourceId: !Ref SysConfigResource
-      HttpMethod: PUT
-      AuthorizationType: COGNITO_USER_POOLS
-      AuthorizerId: !Ref RESTAuthorizer
-      MethodResponses:
-        - StatusCode: "200"
-      Integration:
-        IntegrationHttpMethod: POST
-        IntegrationResponses:
-          - StatusCode: "200"
-        Type: AWS_PROXY
-        Uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SysConfigsUpdateHandlerArn}/invocations 
 
   # Permissions
   UserWorkspaceHandlerrPermission:
@@ -479,21 +421,6 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
 
-  SysConfigsRetrievalHandlerPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref SysConfigsRetrievalHandlerArn
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
-
-  SysConfigsUpdateHandlerPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref SysConfigsUpdateHandlerArn
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*
 
 Parameters:
   EnvironmentName:
@@ -513,8 +440,4 @@ Parameters:
   ChatHandlerArn:
     Type: String
   SourceHandlerArn:
-    Type: String
-  SysConfigsRetrievalHandlerArn:
-    Type: String
-  SysConfigsUpdateHandlerArn:
     Type: String
