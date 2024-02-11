@@ -8,6 +8,7 @@ const workspaceSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    knowledgeChats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'WorkspaceChat' }],
     logoUrl: String,
     tokens: {
         openAI: String

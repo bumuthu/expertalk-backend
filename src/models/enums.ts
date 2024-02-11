@@ -12,3 +12,9 @@ export enum SysConfigName {
     PRICING_PRODUCTS = "pricing-products",
     MONITORING = "monitoring"
 }
+
+export enum ChatScope {
+    PRIVATE,
+    WORKSPACE,
+    PUBLIC
+}

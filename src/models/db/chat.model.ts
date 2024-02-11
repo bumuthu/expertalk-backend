@@ -6,10 +6,9 @@ export interface ChatDocument extends Document, ChatModel { }
 const chatSchema = new Schema({
     message: String,
     timestamp: Number,
+    scope: String,
     byBot: Boolean,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    parentChat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
-    public: Boolean
 });
 
 const ChatDBModel = mongoose.model<ChatDocument>('Chat', chatSchema);

@@ -11,7 +11,10 @@ const knowledgeSchema = new Schema({
     workspace: { type: mongoose.Schema.Types.ObjectId, ref: 'Workspace' },
     sources: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Source' }],
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
-    publicChats: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }]
+    publicChats: [{
+        chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
+        subChats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chat' }]
+    }]
 });
 
 
