@@ -91,7 +91,6 @@ export class UserService extends EntityService<UserModel, UserDocument> {
             email: newUser.email,
             workspaces: [],
             cognitoUserSub: '',
-            knowledgeChats: [],
             notifications: [{
                 timestamp,
                 title: `Welcome to ExperTalk!`,

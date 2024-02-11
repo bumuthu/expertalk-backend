@@ -69,6 +69,7 @@ export namespace ingress {
     export interface KnowledgeQueryInput extends Request {
         knowledgeId?: string, // returns this knowledge
         workspaceId?: string // returns all knowledges of ws
+        recentKnowledgeIds?: string[] // returns all knowledges in recents field
     }
 
     // Source related

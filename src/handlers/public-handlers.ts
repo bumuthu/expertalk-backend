@@ -5,6 +5,7 @@ import { HandlerFunctionType, multiHandler } from "../utils/handlers"
 import { validateRequiredFields } from "../validation/utils";
 import { UserModel } from "../models/entities";
 import { AuthenticationError } from "../utils/exceptions";
+import { WorkspaceService } from "../services/entity-services/workspace-service";
 
 const POOL_ID = process.env.TALK_COGNITO_USER_POOL_ID;
 const CLIENT_ID = process.env.TALK_COGNITO_USER_POOL_CLIENT;
@@ -31,7 +32,21 @@ const createUser = async (event: any) => {
             console.error("Emails:", signUpRes.response.user?.username, newUser.email)
             throw new AuthenticationError("Email was not preperly set");
         }
-        const updatedUser = await userService.update(userId, { cognitoUserSub: signUpRes.response.userSub });
+        const workspaceService: WorkspaceService = new WorkspaceService();
+        const workspaceRes = await workspaceService.create({
+            name: `${newUser.name}'s workspace`,
+            owner: userId,
+            admins: [],
+            members: [],
+            knowledgeChats: [],
+            tokens: {}
+        });
+        const workspaceId: string = WorkspaceService.getEntityKey(workspaceRes);
+
+        const updatedUser = await userService.update(userId, {
+            cognitoUserSub: signUpRes.response.userSub,
+            workspaces: [workspaceId]
+        });
         console.log("Updated user:", updatedUser);
 
         return updatedUser;
