@@ -74,6 +74,14 @@ Resources:
             Method: POST
             Auth: 
               Authorizer: NONE
+        PublicQueryKnowledge:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RESTApi
+            Path: /public/knowledge/query
+            Method: POST
+            Auth: 
+              Authorizer: NONE
 
   UserWorkspaceHandler:
     Type: 'AWS::Serverless::Function'

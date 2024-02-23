@@ -6,6 +6,8 @@ import { validateRequiredFields } from "../validation/utils";
 import { UserModel } from "../models/entities";
 import { AuthenticationError } from "../utils/exceptions";
 import { WorkspaceService } from "../services/entity-services/workspace-service";
+import { SourceService } from "../services/entity-services/source-service";
+import { KnowledgeService } from "../services/entity-services/knowledge-service";
 
 const POOL_ID = process.env.TALK_COGNITO_USER_POOL_ID;
 const CLIENT_ID = process.env.TALK_COGNITO_USER_POOL_CLIENT;
@@ -68,8 +70,14 @@ const loginUser = async (event: any) => {
     return await authService.signIn(loginInput.email, loginInput.password);
 }
 
-const retrieveKnowledges = async (event: any) => {
-    return null;
+const queryKnowledges = async (event: any) => {
+    const requestBody = JSON.parse(event.body);
+    const queryKnowlegdes = requestBody as ingress.KnowledgeQueryInput;
+
+    // TODO this is just to init the source schema. Need a proper solution
+    const sourceService: SourceService = new SourceService();
+    const workspaceService: KnowledgeService = new KnowledgeService();
+    return workspaceService.queryKnowlege(queryKnowlegdes.knowledgeId, queryKnowlegdes.workspaceId)
 }
 
 
@@ -87,8 +95,8 @@ const handlerSelector = (key: string): HandlerFunctionType => {
     switch (key) {
         case "POST:/public/user":
             return createUser;
-        case "POST:/public/knowledges":
-            return retrieveKnowledges;
+        case "POST:/public/knowledge/query":
+            return queryKnowledges;
         case "POST:/public/chats":
             return retrieveKnowledgeChats;
         case "GET:/public/categories":

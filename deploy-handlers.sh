@@ -23,6 +23,7 @@ api_gateway_name="talk-${alias}-api"
 deployment_bucket="talk-${alias}-deployments-${region}"
 template_file=".template/backend-packaged.yaml"
 source_bucket_name="talk-${alias}-sources-${region}"
+stage_name="dev"
 
 rm -r dist
 mkdir dist
@@ -52,7 +53,7 @@ sam deploy --region $region \
     --stack-name $service_name \
     --capabilities CAPABILITY_IAM \
     --parameter-overrides EnvironmentName=$alias \
-    StageName=$alias ApiGatewayName=$api_gateway_name MongoPath=$MONGO_PATH \
+    StageName=$stage_name ApiGatewayName=$api_gateway_name MongoPath=$MONGO_PATH \
     CognitoUserPoolId=$COGNITO_POOL_ID CognitoUserPoolClient=$COGNITO_POOL_CLIENT \
     StripeSecretKey=$STRIPE_SECRET_KEY SourceBucketName=$source_bucket_name \
     SourceUploadAccessKey=$SOURCE_UPLOAD_ACCESS_KEY SourceUploadSecretKey=$SOURCE_UPLOAD_SECRET_KEY \

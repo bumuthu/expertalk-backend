@@ -21,11 +21,23 @@ Resources:
 
   # Deployment
   RESTApiDeployment:
-    Type: 'AWS::ApiGateway::Deployment'
+    Type: AWS::ApiGateway::Deployment
     DependsOn:
       - PublicUserCreate
+      - PublicUserLogin
+      - PublicKnowledgeQuery
       - UserRetrievalByToken
-      # TODO add others
+      - UserUpdateByToken
+      - WorkspaceCreate
+      - WorkspaceUpdate
+      - WorkspacesGetByUserId
+      - KnowledgeCreate
+      - KnowledgeUpdate
+      - KnowledgeQuery
+      - SourceAdd
+      - SourceRemove
+      - SourceUploadUrl
+      - ChatCompletion
     Properties:
       RestApiId: !Ref RESTApi
       StageName: !Ref StageName
@@ -70,6 +82,22 @@ Resources:
       ParentId: !Ref PublicUserResource
       RestApiId: !Ref RESTApi
       PathPart: login
+
+  # /v1/public/knowledge
+  PublicKnowledgeResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PublicResource
+      RestApiId: !Ref RESTApi
+      PathPart: knowledge
+
+  # /v1/public/knowledge/query
+  PublicKnowledgeQueryResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !Ref PublicKnowledgeResource
+      RestApiId: !Ref RESTApi
+      PathPart: query
 
   # /v1/workspace
   WorkspaceResource:
@@ -127,6 +155,25 @@ Resources:
       RestApiId: !Ref RESTApi
       PathPart: "{knowledgeId}"
 
+  # Custom Domain
+  CustomDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Ref DomainName
+      CertificateArn: !Ref DomainCertificateArn
+      EndpointConfiguration:
+        Types:
+          - EDGE
+      SecurityPolicy: TLS_1_2 
+
+  # Base Path Mapping
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    DependsOn: RESTApiDeployment
+    Properties:
+      DomainName: !Ref CustomDomainName
+      RestApiId: !Ref RESTApi
+      Stage: !Ref StageName
 
   # Methods
   PublicUserCreate:
@@ -167,6 +214,25 @@ Resources:
         Uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PublicHandlerArn}/invocations 
 
+  PublicKnowledgeQuery:
+    Type: AWS::ApiGateway::Method
+    DependsOn:
+      - PublicKnowledgeQueryResource
+    Properties:
+      RestApiId: !Ref RESTApi
+      ResourceId: !Ref PublicKnowledgeQueryResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      MethodResponses:
+        - StatusCode: "200"
+      Integration:
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Type: AWS_PROXY
+        Uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PublicHandlerArn}/invocations 
+
   UserRetrievalByToken:
     Type: AWS::ApiGateway::Method
     DependsOn:
@@ -195,7 +261,8 @@ Resources:
       RestApiId: !Ref RESTApi
       ResourceId: !Ref UserResource
       HttpMethod: PUT
-      AuthorizationType: NONE
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref RESTAuthorizer
       MethodResponses:
         - StatusCode: "200"
       Integration:
@@ -467,4 +534,8 @@ Parameters:
   ChatHandlerArn:
     Type: String
   SourceHandlerArn:
+    Type: String
+  DomainName: 
+    Type: String
+  DomainCertificateArn:
     Type: String

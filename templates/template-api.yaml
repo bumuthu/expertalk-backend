@@ -10,6 +10,8 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         StageName: !Ref StageName
         ApiGatewayName: !Ref ApiGatewayName
+        DomainName: !Ref DomainName
+        DomainCertificateArn: !Ref DomainCertificateArn
         CognitoUserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
         UserWorkspaceHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-UserWorkspaceHandler
         KnowledgeHandlerArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:talk-${EnvironmentName}-KnowledgeHandler
@@ -35,4 +37,8 @@ Parameters:
   ApiGatewayName:
     Type: String
   CognitoUserPoolId:
+    Type: String
+  DomainName:
+    Type: String
+  DomainCertificateArn:
     Type: String
