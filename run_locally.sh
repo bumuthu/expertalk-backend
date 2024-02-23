@@ -43,14 +43,14 @@ npm run build
 cp -r ./lib ./dist
 cp package.json ./dist
 cp package-lock.json ./dist
-cp templates/template-handlers.yaml ./dist
+cp -r templates/* ./dist
 cp -r node_modules ./dist
 
 cd ./dist
 npm install --only=prod
 
 sam build --region $region \
-    --template-file ./template-handlers.yaml \
+    --template-file ./template-handlers.yaml
 
 rm -r ../.aws-sam
 mkdir ../.aws-sam

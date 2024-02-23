@@ -6,7 +6,7 @@ export const multiHandler = async (event: any, handlerSelector: (key: string) =>
     console.log("Event", event)
     let path = event.requestContext.path;
     if (event.requestContext.stage) {
-        path = path.replace(`/${event.requestContext.stage}`, '');
+        path = path.replace(`/${event.requestContext.stage}/v1`, '');
     } 
     const selector = `${event.requestContext.httpMethod}:${path}`;
     console.log("[multiHandler], Selector", selector);

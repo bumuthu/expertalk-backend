@@ -24,24 +24,6 @@ Globals:
         PINECONE_ENVIRONMENT: !Sub ${PineconeEnvironment}
 
 Resources:
-  # API resource
-  RESTApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: !Sub '${ApiGatewayName}-rest'
-      StageName: !Ref StageName
-      Cors:
-        AllowOrigin: "'*'"
-        AllowHeaders: "'*'"
-        AllowMethods: "'*'"
-      Auth:
-        DefaultAuthorizer: CognitoAuthorizer
-        AddDefaultAuthorizerToCorsPreflight: false
-        Authorizers:
-          CognitoAuthorizer:
-            UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
-
-
   # Handlers
   WebsocketHandler:
     Type: 'AWS::Serverless::Function'
@@ -57,131 +39,30 @@ Resources:
     Properties:
       Handler: lib/handlers/public-handlers.handler
       FunctionName: !Sub 'talk-${EnvironmentName}-PublicHandler'
-      Events:
-        PublicUserCreateEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /public/user
-            Method: POST
-            Auth: 
-              Authorizer: NONE
-        PublicUserLoginEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /public/user/login
-            Method: POST
-            Auth: 
-              Authorizer: NONE
-        PublicQueryKnowledge:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /public/knowledge/query
-            Method: POST
-            Auth: 
-              Authorizer: NONE
 
   UserWorkspaceHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: lib/handlers/user-workspace-handlers.handler
       FunctionName: !Sub 'talk-${EnvironmentName}-UserWorkspaceHandler'
-      Events:
-        GetUserEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /user
-            Method: GET
-        UpdateUserEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /user
-            Method: PUT
-        CreateWorkspaceEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /workspace
-            Method: POST
-        UpdateWorkspaceEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /workspace
-            Method: PUT
-        GetWorkspacesEvent:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /workspace
-            Method: GET
 
   KnowledgeHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: lib/handlers/knowledge-handlers.handler
       FunctionName: !Sub 'talk-${EnvironmentName}-KnowledgeHandler'
-      Events:
-        CreateKnowledge:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /knowledge
-            Method: POST
-        UpdateKnowledge:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /knowledge
-            Method: PUT
-        QueryKnowledge:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /knowledge/query
-            Method: POST
 
   SourceHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: lib/handlers/source-handlers.handler
       FunctionName: !Sub 'talk-${EnvironmentName}-SourceHandler'
-      Events:
-        AddSource:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /source
-            Method: POST
-        RemoveSource:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /source
-            Method: DELETE
-        GetUploadUrl:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /source/upload-url/{knowledgeId}
-            Method: GET
         
   ChatHandler:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: lib/handlers/chat-handlers.handler
       FunctionName: !Sub 'talk-${EnvironmentName}-ChatHandler'
-      Events:
-        ChatCompletion:
-          Type: Api
-          Properties:
-            RestApiId: !Ref RESTApi
-            Path: /chat
-            Method: POST
 
 
   # Schedulled function to validate user billings
