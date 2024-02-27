@@ -2,12 +2,14 @@ import { respondError, respondSuccess } from "./response-generator";
 
 export type HandlerFunctionType = (event: any) => Promise<any>;
 
+const API_VERSION: string = "v1";
+
 export const multiHandler = async (event: any, handlerSelector: (key: string) => HandlerFunctionType) => {
     console.log("Event", event)
     let path = event.requestContext.path;
-    if (event.requestContext.stage) {
-        path = path.replace(`/${event.requestContext.stage}/v1`, '');
-    } 
+    if (path.startsWith(`/${API_VERSION}`)) {
+        path = path.replace(`/${API_VERSION}`, '');
+    }
     const selector = `${event.requestContext.httpMethod}:${path}`;
     console.log("[multiHandler], Selector", selector);
     try {
